@@ -1,0 +1,60 @@
+export default {
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "站点设置",
+    "description": "网站基本信息"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string",
+      "required": true,
+      "default": "高校官网"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "favicon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "icpRecordNo": {
+      "type": "string"
+    },
+    "policeRecordNo": {
+      "type": "string"
+    },
+    "address": {
+      "type": "text"
+    },
+    "postcode": {
+      "type": "string"
+    },
+    "generalPhone": {
+      "type": "string"
+    },
+    "generalEmail": {
+      "type": "email"
+    },
+    "footerLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.footer-link"
+    }
+  }
+};

@@ -1,0 +1,48 @@
+# Dependencies
+cms/node_modules/
+frontend/node_modules/
+
+# Build outputs
+cms/.cache/
+cms/build/
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+
+# Environment files
+*.env.local
+*.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Uploads (runtime data)
+cms/public/uploads/
+
+# Database (SQLite for dev)
+cms/*.db
+cms/data/
+
+# Strapi build outputs
+cms/dist/
+cms/build/
+cms/.strapi/
+
+# Database
+cms/database/data.db
+cms/database/data.db-shm
+cms/database/data.db-wal
+
+# Environment files (contain secrets)
+cms/.env
+cms/.env.local
+cms/.env.*.local

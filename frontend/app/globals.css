@@ -1,0 +1,44 @@
+/**
+ * 全局样式文件 - globals.css
+ * 
+ * 这是 Next.js 应用的全局样式文件，主要包含：
+ * 1. TailwindCSS 的导入（通过 @import "tailwindcss"）
+ * 2. CSS 变量定义（用于主题颜色等）
+ * 3. 暗色模式支持
+ * 4. 全局 body 样式
+ */
+
+/* 导入 TailwindCSS - 自动包含所有基础样式、重置和工具类 */
+@import "tailwindcss";
+
+/**
+ * CSS 变量定义区域
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/**
+ * 暗色模式媒体查询
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/**
+ * 全局 body 样式
+ * 
+ * 这些样式会应用到所有页面，因为 body 是根元素
+ */
+body {
+  /* 使用 CSS 变量设置背景和文字颜色（支持亮/暗模式自动切换） */
+  background: var(--background);
+  color: var(--foreground);
+  
+  /* 字体栈：依次查找系统字体，提高兼容性 */
+  font-family: Arial, Helvetica, sans-serif;
+}
