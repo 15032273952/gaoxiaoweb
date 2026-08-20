@@ -45,14 +45,14 @@ export function NoticeList({ notices }: { notices: NoticeListItem[] }) {
           {/* hover:text-blue-700: 悬停时标题变蓝色 */}
           <Link
             href={`/notices/${notice.slug}`}
-            className="flex items-baseline justify-between gap-4 hover:text-blue-700 transition-colors"
+            className="group flex items-baseline justify-between gap-4 transition-colors"
           >
             {/* 标题区域 */}
             {/* flex-1: 占据剩余空间 */}
             {/* text-sm: 小字号 */}
             {/* text-zinc-800: 深灰色文字 */}
             {/* line-clamp-1: 最多显示 1 行，超出省略 */}
-            <span className="flex-1 text-sm text-zinc-800 line-clamp-1">
+            <span className="flex-1 text-sm text-zinc-700 group-hover:text-thu-purple line-clamp-1 transition-colors">
               {/* 置顶标记（可选） */}
               {notice.isTop && (
                 <span className="inline-block mr-2 text-xs text-red-600 font-normal">[置顶]</span>

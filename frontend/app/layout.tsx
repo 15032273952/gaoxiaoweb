@@ -46,19 +46,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;  // React 节点类型，表示任意 React 子元素
 }>) {
-  // 默认网站名称，当 CMS 不可用时使用
-  let siteName = "高校官网";
-  
+  // 获取站点设置：导航栏名称 + 页脚信息共用
+  // CMS 不可用时降级为 null，页脚显示简化版
+  let setting = null;
   try {
-    // 异步获取网站配置信息（包含网站名称等）
-    // 如果 CMS 服务不可用，getSiteSetting() 会抛出异常
-    const setting = await getSiteSetting();
-    // 从配置中取出 siteName 用于显示在导航栏
-    siteName = setting.siteName;
+    setting = await getSiteSetting();
   } catch {
-    // 捕获异常：当 CMS 不可用时，使用默认名称 "高校官网"
+    // 捕获异常：当 CMS 不可用时使用默认值
     // 注意：cms.ts 内部已经处理了构建期失败的逻辑，这里只是兜底
   }
+  const siteName = setting?.siteName ?? "高校官网";
 
   // 返回完整的 HTML 文档结构
   return (
@@ -73,8 +70,8 @@ export default async function RootLayout({
           {children}
         </main>
         
-        {/* SiteFooter: 底部信息栏（版权信息、联系方式等） */}
-        <SiteFooter />
+        {/* SiteFooter: 深紫底页脚（页脚链接、联系方式、备案信息） */}
+        <SiteFooter setting={setting} />
       </body>
     </html>
   );
