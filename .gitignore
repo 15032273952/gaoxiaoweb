@@ -54,3 +54,7 @@ frontend/.env.local
 frontend/.env.*.local
 deploy/.env
 deploy/.env.local
+
+# Deploy scripts (contain server credentials)
+deploy/ssh_sftp_put.py
+deploy/ssh_exec.py
