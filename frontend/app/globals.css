@@ -1,44 +1,94 @@
 /**
  * 全局样式文件 - globals.css
- * 
- * 这是 Next.js 应用的全局样式文件，主要包含：
- * 1. TailwindCSS 的导入（通过 @import "tailwindcss"）
- * 2. CSS 变量定义（用于主题颜色等）
- * 3. 暗色模式支持
- * 4. 全局 body 样式
+ *
+ * 设计风格参考清华大学官网（tsinghua.edu.cn）：
+ * - 主色调：清华紫（#660874 系），庄重典雅
+ * - 白色背景 + 深灰正文，层次分明
+ * - 标题使用衬线字体（宋体系），正文使用黑体系，符合高校官网排版习惯
+ *
+ * 包含：
+ * 1. TailwindCSS 导入
+ * 2. 主题 CSS 变量（清华紫配色体系）
+ * 3. 全局字体与排版
  */
 
 /* 导入 TailwindCSS - 自动包含所有基础样式、重置和工具类 */
 @import "tailwindcss";
 
 /**
- * CSS 变量定义区域
+ * 主题 CSS 变量 —— 清华紫配色体系
+ *
+ * --thu-purple:      主色（深紫），用于导航条、页脚、版块标题强调
+ * --thu-purple-dark: 更深的紫色，用于顶部辅助条、页脚底部、悬停态
+ * --thu-purple-light:浅紫，用于卡片悬停底色、标签底色
+ * --thu-gold:        点缀金（少量使用，如分隔装饰线）
  */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --thu-purple: #660874;
+  --thu-purple-dark: #4a0655;
+  --thu-purple-light: #f6eef8;
+  --thu-gold: #c9a063;
 }
 
 /**
- * 暗色模式媒体查询
+ * TailwindCSS v4 主题映射
+ * 让 thu-* 颜色可以直接作为工具类使用，如 bg-thu-purple / text-thu-purple-dark
  */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme inline {
+  --color-thu-purple: var(--thu-purple);
+  --color-thu-purple-dark: var(--thu-purple-dark);
+  --color-thu-purple-light: var(--thu-purple-light);
+  --color-thu-gold: var(--thu-gold);
 }
 
 /**
  * 全局 body 样式
- * 
- * 这些样式会应用到所有页面，因为 body 是根元素
  */
 body {
-  /* 使用 CSS 变量设置背景和文字颜色（支持亮/暗模式自动切换） */
-  background: var(--background);
-  color: var(--foreground);
-  
-  /* 字体栈：依次查找系统字体，提高兼容性 */
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #262626;
+
+  /* 正文字体栈：优先系统中文字体，保证中英文混排协调 */
+  font-family:
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/**
+ * 标题字体层级
+ * 高校官网惯用衬线标题（宋体系），显得庄重正式
+ */
+h1, h2, h3, .font-serif-title {
+  font-family:
+    "Noto Serif SC", "Source Han Serif SC", "SimSun",
+    "Songti SC", serif;
+}
+
+/**
+ * 通用版块标题样式（供各页面复用）
+ * 左侧紫色竖条 + 衬线大标题 + 右侧"更多"链接，层次清晰
+ */
+.section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--thu-purple);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.section-title > .section-title-text {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--thu-purple-dark);
+}
+.section-title > .section-title-text::before {
+  content: "";
+  display: inline-block;
+  width: 0.375rem;
+  height: 1.375rem;
+  background: var(--thu-purple);
+  border-radius: 1px;
 }

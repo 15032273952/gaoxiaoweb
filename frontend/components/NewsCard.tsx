@@ -30,7 +30,7 @@ export function NewsCard({ article }: { article: ArticleListItem }) {
     // rounded-lg: 大圆角
     // hover:shadow-sm: 悬停时添加轻微阴影
     // transition-shadow: 阴影过渡动画
-    <article className="flex gap-4 p-4 border border-zinc-200 rounded-lg hover:shadow-sm transition-shadow">
+    <article className="flex gap-4 p-4 border border-zinc-100 rounded-lg hover:border-thu-purple/40 hover:shadow-md transition-all">
       
       {/* 封面图区域（可选，有图片时才显示） */}
       {/* flex-shrink-0: 不允许缩小 */}
@@ -53,7 +53,7 @@ export function NewsCard({ article }: { article: ArticleListItem }) {
         {/* 文章标题链接 */}
         <Link
           href={`/news/${article.slug}`}  // 点击跳转到新闻详情页
-          className="text-base font-medium text-zinc-900 hover:text-blue-700 line-clamp-2"
+          className="text-base font-medium text-zinc-900 hover:text-thu-purple line-clamp-2 transition-colors"
           // line-clamp-2: 最多显示 2 行，超出省略
         >
           {/* 置顶标记（可选） */}
