@@ -50,6 +50,8 @@ export type ArticleDetail = ArticleListItem & {
     /** 附件文件大小（字节，可选） */
     size?: number;
   }[];
+  /** 作者署名（可选，CMS authors 字段） */
+  authors?: string;
   /** SEO 标题（可选，用于 meta title，覆盖默认标题） */
   seoTitle?: string;
   /** SEO 描述（可选，用于 meta description） */
@@ -72,6 +74,8 @@ export type NoticeListItem = {
   isTop?: boolean;
   /** 通知文号（可选，如 "校发〔2024〕1号"） */
   noticeNo?: string;
+  /** 通知级别（school=校级 / dept=部门） */
+  level?: string;
 };
 
 /**

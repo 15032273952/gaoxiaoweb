@@ -10,8 +10,7 @@
 
 // 导入新闻列表项类型
 import type { ArticleListItem } from "@/lib/types";
-
-// 导入 Next.js Link 组件
+import { articleCategoryLabel, formatDate } from "@/lib/labels";
 import Link from "next/link";
 
 /**
@@ -57,31 +56,24 @@ export function NewsCard({ article }: { article: ArticleListItem }) {
           // line-clamp-2: 最多显示 2 行，超出省略
         >
           {/* 置顶标记（可选） */}
-          {article.isPinned && (
-            <span className="inline-block mr-2 text-xs text-red-600 font-normal">[置顶]</span>
+        {article.isPinned && (
+            <span className="inline-block mr-2 text-xs text-white bg-thu-purple px-1.5 py-0.5 rounded font-normal align-middle">
+              置顶
+            </span>
           )}
-          {/* 文章标题 */}
           {article.title}
         </Link>
 
-        {/* 文章摘要（可选，有内容时才显示） */}
-        {/* mt-1: 与标题 0.25rem 间距 */}
-        {/* text-sm: 小字号 */}
-        {/* text-zinc-500: 次要文字颜色 */}
-        {/* line-clamp-2: 最多显示 2 行 */}
         {article.summary && (
           <p className="mt-1 text-sm text-zinc-500 line-clamp-2">
             {article.summary}
           </p>
         )}
 
-        {/* 发布日期 */}
-        {/* mt-2: 与摘要 0.5rem 间距 */}
-        {/* text-xs: 最小字号 */}
-        {/* text-zinc-400: 更浅的灰色 */}
-        <div className="mt-2 text-xs text-zinc-400">
-          {/* 将 ISO 日期字符串转换为中文格式日期 */}
-          {new Date(article.publishedAt).toLocaleDateString("zh-CN")}
+        <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
+          <span>{articleCategoryLabel(article.category)}</span>
+          <span aria-hidden="true">·</span>
+          <span>{formatDate(article.publishedAt)}</span>
         </div>
       </div>
     </article>

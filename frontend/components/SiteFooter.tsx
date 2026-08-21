@@ -16,7 +16,7 @@ export function SiteFooter({ setting }: { setting?: SiteSetting | null }) {
   // 无配置时的简化显示（保持紫色系，视觉统一）
   if (!setting) {
     return (
-      <footer className="w-full bg-thu-purple py-8 text-center text-sm text-white/70">
+      <footer className="print-hidden w-full bg-thu-purple py-8 text-center text-sm text-white/70">
         <p className="font-serif-title text-white/90 text-base">高校官网</p>
         <p className="mt-2">暂无站点信息</p>
       </footer>
@@ -24,7 +24,7 @@ export function SiteFooter({ setting }: { setting?: SiteSetting | null }) {
   }
 
   return (
-    <footer className="w-full text-sm">
+    <footer className="print-hidden w-full text-sm">
       {/* 主区域：深紫底 */}
       <div className="bg-thu-purple text-white/85 py-10">
         <div className="mx-auto max-w-6xl px-4 space-y-6">

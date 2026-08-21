@@ -12,8 +12,7 @@
 
 // 导入 CMS 数据获取函数
 import { getPageBySlug } from "@/lib/cms";
-
-// 导入 Next.js Metadata 类型（SEO 用）
+import { Breadcrumb } from "@/components/Breadcrumb";
 import type { Metadata } from "next";
 
 /**
@@ -37,9 +36,8 @@ export default async function AboutPage() {
   return (
     // 外层容器：max-w-3xl 限制阅读宽度，水平居中
     <div className="mx-auto max-w-3xl px-4 py-8">
-      
-      {/* 页面标题 */}
-      <h1 className="text-2xl font-bold mb-6">学校概况</h1>
+      <Breadcrumb items={[{ label: "学校概况" }]} />
+      <h1 className="text-2xl font-bold mb-6 font-serif-title">学校概况</h1>
       
       {/* 判断页面内容是否存在 */}
       {page ? (

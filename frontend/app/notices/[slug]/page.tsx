@@ -1,104 +1,90 @@
 /**
- * 通知详情页 - app/notices/[slug]/page.tsx
- * 
- * 路由：/notices/[slug]（如 /notices/2024-001）
- * 功能：显示单条通知的完整内容
- * 
- * 动态路由 [slug]：
- * - [slug] 是 Next.js App Router 的动态路由参数
- * - 会匹配 /notices/任意值 的 URL
+ * 通知详情页：面包屑、时效提示、返回列表
  */
 
-// 导入 CMS 数据获取函数
-import { getNoticeBySlug } from "@/lib/cms";
-
-// 导入 Next.js 的 notFound 函数（处理 404）
+import { getNoticeBySlug, getNotices } from "@/lib/cms";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { ArticleToolbar } from "@/components/ArticleToolbar";
+import { PrevNextNav } from "@/components/PrevNextNav";
+import { formatDate, noticeLevelLabel } from "@/lib/labels";
 import { notFound } from "next/navigation";
-
-// 导入 Metadata 类型
+import Link from "next/link";
 import type { Metadata } from "next";
 
-/**
- * 动态路由参数类型
- * 
- * Next.js 15+ 使用 Promise 包裹 params
- */
 type Props = { params: Promise<{ slug: string }> };
 
-/**
- * 静态路径生成（output: export 必需）
- *
- * 返回 slug 数组。SSG 模式下需为每个 slug 预渲染。
- * POC 阶段返回空数组，由运行时 fallback 处理。
- */
 export async function generateStaticParams() {
   return [];
 }
 
-/**
- * 生成页面 SEO 元数据
- *
- * 动态生成每个通知详情页的标题和描述
- */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // 解构获取 slug 参数
   const { slug } = await params;
-  
-  // 获取通知详情
   const notice = await getNoticeBySlug(slug).catch(() => null);
-  
-  // 未找到通知，返回默认标题
   if (!notice) return { title: "通知详情 - 高校官网" };
-  
-  // 返回动态元数据
-  // seoTitle 优先，其次使用 notice.title
   return {
     title: notice.seoTitle ?? notice.title,
     description: notice.seoDescription ?? notice.summary,
   };
 }
 
-/**
- * 通知详情页组件
- */
 export default async function NoticeDetailPage({ params }: Props) {
   const { slug } = await params;
-  
-  // 获取通知详情
   const notice = await getNoticeBySlug(slug).catch(() => null);
-
-  // 未找到通知，显示 404 页面
   if (!notice) notFound();
 
+  const allNotices = await getNotices().catch(() => []);
+
+  // 时效判断必须基于渲染时刻的当前时间；本页按请求渲染、不缓存，此处豁免纯度检查
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now();
+  const expired =
+    notice.expireDate && !Number.isNaN(new Date(notice.expireDate).getTime())
+      ? new Date(notice.expireDate).getTime() < now
+      : false;
+  const notYetEffective =
+    notice.effectiveDate && !Number.isNaN(new Date(notice.effectiveDate).getTime())
+      ? new Date(notice.effectiveDate).getTime() > now
+      : false;
+
   return (
-    // <article>: HTML5 语义化标签，表示文章内容
     <article className="mx-auto max-w-3xl px-4 py-8">
-      {/* 文章头部 */}
+      <Breadcrumb
+        items={[
+          { label: "通知公告", href: "/notices" },
+          { label: notice.title },
+        ]}
+      />
+      <ArticleToolbar />
       <header className="mb-8">
-        {/* 文章标题 */}
-        <h1 className="text-2xl font-bold mb-2">{notice.title}</h1>
-        
-        {/* 文章元信息：日期、文号、级别 */}
-        {/* text-sm: 小字号 */}
-        {/* text-zinc-400: 灰色文字 */}
-        {/* space-x-4: 水平排列，间距 1rem */}
-        <div className="text-sm text-zinc-400 space-x-4">
-          {/* 发布日期：转换为中文格式 */}
-          <span>{new Date(notice.publishedAt).toLocaleDateString("zh-CN")}</span>
-          {/* 文号（可选） */}
+        <h1 className="text-2xl font-bold mb-3 font-serif-title">{notice.title}</h1>
+        <div className="text-sm text-zinc-400 flex flex-wrap gap-x-4 gap-y-1">
+          <span>{formatDate(notice.publishedAt)}</span>
           {notice.noticeNo && <span>文号：{notice.noticeNo}</span>}
-          {/* 通知级别（可选，如"普通"、"重要"） */}
-          {notice.level && <span>级别：{notice.level}</span>}
+          {notice.level && <span>级别：{noticeLevelLabel(notice.level)}</span>}
+          {notice.effectiveDate && <span>生效：{formatDate(notice.effectiveDate)}</span>}
+          {notice.expireDate && <span>失效：{formatDate(notice.expireDate)}</span>}
         </div>
+        {expired && (
+          <p className="mt-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+            本通知已过失效日期，内容仅供查阅。
+          </p>
+        )}
+        {!expired && notYetEffective && (
+          <p className="mt-3 text-sm text-zinc-600 bg-zinc-50 border border-zinc-200 rounded px-3 py-2">
+            本通知尚未到生效日期。
+          </p>
+        )}
       </header>
 
-      {/* 正文内容 */}
+      {notice.summary && (
+        <p className="mb-6 text-zinc-600 text-sm leading-relaxed">{notice.summary}</p>
+      )}
+
       <div
-        className="prose prose-zinc max-w-none"
+        className="prose prose-zinc max-w-none article-body"
         dangerouslySetInnerHTML={{ __html: notice.contentHtml }}
       />
 
-      {/* 附件下载区域 */}
       {notice.attachments.length > 0 && (
         <section className="mt-8 border-t border-zinc-200 pt-6">
           <h2 className="text-lg font-semibold mb-3">附件下载</h2>
@@ -109,11 +95,9 @@ export default async function NoticeDetailPage({ params }: Props) {
                   href={att.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-700 hover:underline text-sm"
+                  className="text-thu-purple hover:underline text-sm"
                 >
-                  {/* 附件名称 */}
                   {att.name}
-                  {/* 显示文件大小（可选） */}
                   {att.size ? ` (${(att.size / 1024).toFixed(1)} KB)` : ""}
                 </a>
               </li>
@@ -121,6 +105,18 @@ export default async function NoticeDetailPage({ params }: Props) {
           </ul>
         </section>
       )}
+
+      <PrevNextNav
+        items={allNotices.map((n) => ({ slug: n.slug, title: n.title }))}
+        currentSlug={notice.slug}
+        basePath="/notices"
+      />
+
+      <p className="mt-10">
+        <Link href="/notices" className="text-sm text-thu-purple hover:underline">
+          ← 返回通知列表
+        </Link>
+      </p>
     </article>
   );
 }

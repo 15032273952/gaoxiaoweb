@@ -116,7 +116,7 @@ function isList(res: any): res is StrapiListResponse {
 
 export async function getArticles(): Promise<ArticleListItem[]> {
   const res = await cmsFetch(
-    "/articles?filters[moderationStatus][$eq]=published&sort=publishedAt:desc&pagination[pageSize]=100&populate=cover",
+    "/articles?filters[moderationStatus][$eq]=published&sort=isPinned:desc,publishedAt:desc&pagination[pageSize]=100&populate=cover",
   );
   if (!isList(res)) return [];
   return res.data.map((a) => ({
@@ -133,7 +133,7 @@ export async function getArticles(): Promise<ArticleListItem[]> {
 
 export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
   const res = await cmsFetch(
-    `/articles?filters[slug][$eq]=${slug}&publicationState=live&populate=cover,attachments`,
+    `/articles?filters[slug][$eq]=${encodeURIComponent(slug)}&publicationState=live&populate=cover,attachments`,
   );
   if (!isList(res) || res.data.length === 0) return null;
   const a = res.data[0];
@@ -148,6 +148,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
     isPinned: a.isPinned ?? false,
     contentHtml: a.content ?? a.contentHtml ?? "",
     attachments: mediaList(a.attachments),
+    authors: a.authors,
     seoTitle: a.seoTitle,
     seoDescription: a.seoDescription,
   };
@@ -165,12 +166,13 @@ export async function getNotices(): Promise<NoticeListItem[]> {
     publishedAt: n.publishedAt,
     isTop: n.isTop ?? false,
     noticeNo: n.noticeNo,
+    level: n.level,
   }));
 }
 
 export async function getNoticeBySlug(slug: string): Promise<NoticeDetail | null> {
   const res = await cmsFetch(
-    `/notices?filters[slug][$eq]=${slug}&populate=attachments`,
+    `/notices?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=attachments`,
   );
   if (!isList(res) || res.data.length === 0) return null;
   const n = res.data[0];
@@ -260,7 +262,7 @@ export async function getFacultyProfiles(): Promise<FacultyProfile[]> {
 
 export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   const res = await cmsFetch(
-    `/pages?filters[slug][$eq]=${slug}&populate=attachments`,
+    `/pages?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=attachments`,
   );
   if (!isList(res) || res.data.length === 0) return null;
   const p = res.data[0];
@@ -274,4 +276,89 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
     seoTitle: p.seoTitle,
     seoDescription: p.seoDescription,
   };
+}
+
+export type SiteSearchHit = {
+  kind: "news" | "notice" | "faculty" | "department";
+  title: string;
+  href: string;
+  snippet: string;
+};
+
+function includesQuery(haystack: string | undefined, query: string): boolean {
+  return (haystack ?? "").toLowerCase().includes(query);
+}
+
+/** 站内检索：新闻、通知、师资、部门（构建/请求期在服务端过滤） */
+export async function searchSite(q: string): Promise<SiteSearchHit[]> {
+  const query = q.trim().toLowerCase();
+  if (!query) return [];
+
+  const [articles, notices, faculty, departments] = await Promise.all([
+    getArticles().catch(() => []),
+    getNotices().catch(() => []),
+    getFacultyProfiles().catch(() => []),
+    getDepartments().catch(() => []),
+  ]);
+
+  const hits: SiteSearchHit[] = [];
+
+  for (const a of articles) {
+    if (
+      includesQuery(a.title, query) ||
+      includesQuery(a.summary, query) ||
+      includesQuery(a.category, query)
+    ) {
+      hits.push({
+        kind: "news",
+        title: a.title,
+        href: `/news/${a.slug}`,
+        snippet: a.summary || a.category,
+      });
+    }
+  }
+
+  for (const n of notices) {
+    if (includesQuery(n.title, query) || includesQuery(n.noticeNo, query)) {
+      hits.push({
+        kind: "notice",
+        title: n.title,
+        href: `/notices/${n.slug}`,
+        snippet: n.noticeNo ?? "通知公告",
+      });
+    }
+  }
+
+  for (const f of faculty) {
+    if (
+      includesQuery(f.name, query) ||
+      includesQuery(f.title, query) ||
+      includesQuery(f.college, query) ||
+      includesQuery(f.researchFields, query)
+    ) {
+      hits.push({
+        kind: "faculty",
+        title: f.name,
+        href: `/faculty#faculty-${f.id}`,
+        snippet: [f.title, f.college, f.researchFields].filter(Boolean).join(" · "),
+      });
+    }
+  }
+
+  for (const d of departments) {
+    if (
+      includesQuery(d.name, query) ||
+      includesQuery(d.intro, query) ||
+      includesQuery(d.responsibilities, query)
+    ) {
+      hits.push({
+        kind: "department",
+        title: d.name,
+        href: `/organization#dept-${d.id}`,
+        snippet: d.intro ?? d.responsibilities ?? "机构设置",
+      });
+    }
+  }
+
+  return hits;
 }
