@@ -33,6 +33,7 @@ class SSHConfig:
     port: int = 22
     username: str = "root"
     password: Optional[str] = None
+    key_path: Optional[str] = None  # 私钥路径（服务器已禁用密码登录，优先使用）
     timeout: float = 10.0
     # 连通性测试命令：返回一行标识 + 系统基本信息
     command: str = "echo 'SSH_CONNECTION_OK'; uname -sn; uptime"
@@ -52,8 +53,9 @@ def connect_and_test(cfg: SSHConfig) -> str:
             port=cfg.port,
             username=cfg.username,
             password=cfg.password,
+            key_filename=cfg.key_path,
             timeout=cfg.timeout,
-            look_for_keys=False,   # 仅用密码，避免尝试本地密钥带来的额外耗时/报错
+            look_for_keys=False,   # 仅显式指定的凭据，避免本地密钥带来的额外耗时/报错
             allow_agent=False,     # 不向本机 ssh-agent 请求密钥
         )
     except paramiko.AuthenticationException as e:
@@ -97,15 +99,14 @@ def connect_and_test(cfg: SSHConfig) -> str:
 
 def main() -> int:
     # ===== 连接信息（从环境变量读取，禁止硬编码密码） =====
-    # 用法示例：
-    #   export SSH_HOST=... SSH_USER=... SSH_PASSWORD=...
-    #   python ssh_connect_test.py
-    # 也可通过项目根目录 .env 文件提供（已被 .gitignore 忽略）
+    # 服务器已启用密钥登录并禁用密码认证：
+    #   优先使用 SSH_KEY（私钥路径），SSH_PASSWORD 仅作兼容保留
     host = os.environ.get("SSH_HOST", "")
+    key_path = os.environ.get("SSH_KEY", "")
     password = os.environ.get("SSH_PASSWORD", "")
-    if not host or not password:
+    if not host or not (key_path or password):
         print(
-            "[-] 缺少连接信息：请设置环境变量 SSH_HOST / SSH_PORT / SSH_USER / SSH_PASSWORD",
+            "[-] 缺少连接信息：请设置环境变量 SSH_HOST / SSH_PORT / SSH_USER / SSH_KEY（或 SSH_PASSWORD）",
             file=sys.stderr,
         )
         return 2
@@ -114,7 +115,8 @@ def main() -> int:
         host=host,
         port=int(os.environ.get("SSH_PORT", "22")),
         username=os.environ.get("SSH_USER", "root"),
-        password=password,
+        password=password or None,
+        key_path=key_path or None,
         timeout=10.0,
     )
 

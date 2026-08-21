@@ -12,20 +12,22 @@ import sys
 import paramiko
 
 # 连接信息从环境变量读取（禁止硬编码密码）：
-#   SSH_HOST / SSH_PORT / SSH_USER / SSH_PASSWORD
+#   SSH_HOST / SSH_PORT / SSH_USER / SSH_KEY（私钥路径，服务器已禁用密码登录）
+#   SSH_PASSWORD 仅作兼容保留
 # 可写入项目根目录 .env 文件（已被 .gitignore 忽略）
 HOST = os.environ.get("SSH_HOST", "")
 PORT = int(os.environ.get("SSH_PORT", "22"))
 USER = os.environ.get("SSH_USER", "root")
-PASS = os.environ.get("SSH_PASSWORD", "")
+PASS = os.environ.get("SSH_PASSWORD", "") or None
+KEY = os.environ.get("SSH_KEY", "") or None
 
 
 def main() -> int:
     if len(sys.argv) < 2:
         print("用法: python ssh_exec.py \"<命令>\" [超时秒数]", file=sys.stderr)
         return 2
-    if not HOST or not PASS:
-        print("[缺少连接信息] 请设置环境变量 SSH_HOST / SSH_PORT / SSH_USER / SSH_PASSWORD", file=sys.stderr)
+    if not HOST or not (KEY or PASS):
+        print("[缺少连接信息] 请设置环境变量 SSH_HOST / SSH_PORT / SSH_USER / SSH_KEY（或 SSH_PASSWORD）", file=sys.stderr)
         return 2
     cmd = sys.argv[1]
     timeout = int(sys.argv[2]) if len(sys.argv) > 2 else 300
@@ -35,6 +37,7 @@ def main() -> int:
     try:
         client.connect(
             HOST, PORT, USER, PASS,
+            key_filename=KEY,
             timeout=30, look_for_keys=False, allow_agent=False,
         )
     except Exception as e:
