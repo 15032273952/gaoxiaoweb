@@ -23,6 +23,19 @@ from typing import Optional
 import paramiko
 
 
+def _load_dotenv():
+    """自动加载脚本所在目录的 .env（不存在则跳过；已设置的环境变量优先）。"""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                os.environ.setdefault(key.strip(), value.strip())
+
+
 class SSHConnectionError(Exception):
     """SSH 连接/测试相关错误的统一封装。"""
 
@@ -98,9 +111,8 @@ def connect_and_test(cfg: SSHConfig) -> str:
 
 
 def main() -> int:
-    # ===== 连接信息（从环境变量读取，禁止硬编码密码） =====
-    # 服务器已启用密钥登录并禁用密码认证：
-    #   优先使用 SSH_KEY（私钥路径），SSH_PASSWORD 仅作兼容保留
+    _load_dotenv()
+    # ===== 连接信息（优先级：环境变量 > .env 文件；支持密钥 SSH_KEY 或密码 SSH_PASSWORD） =====
     host = os.environ.get("SSH_HOST", "")
     key_path = os.environ.get("SSH_KEY", "")
     password = os.environ.get("SSH_PASSWORD", "")
