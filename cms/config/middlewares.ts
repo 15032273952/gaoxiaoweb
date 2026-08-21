@@ -8,11 +8,25 @@
  * 此处使用默认安全相关中间件。
  */
 
-export default [
+export default ({ env }: { env: any }) => [
   'strapi::logger',
   'strapi::errors',
   'strapi::security',
-  'strapi::cors',
+  {
+    // CORS 白名单：通过环境变量 CORS_ORIGINS 配置（逗号分隔），
+    // 例如 CORS_ORIGINS=https://www.example.com,https://example.com
+    // 本地开发默认仅放行 localhost。
+    name: 'strapi::cors',
+    config: {
+      origin: env.array('CORS_ORIGINS', [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+      ]),
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+      headers: ['Content-Type', 'Authorization'],
+      keepHeaderOnError: true,
+    },
+  },
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',

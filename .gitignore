@@ -43,6 +43,14 @@ cms/database/data.db-shm
 cms/database/data.db-wal
 
 # Environment files (contain secrets)
+.env
+.env.*
+!.env.example
 cms/.env
 cms/.env.local
 cms/.env.*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+deploy/.env
+deploy/.env.local
