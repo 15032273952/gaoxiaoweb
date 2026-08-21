@@ -9,8 +9,7 @@
 
 // 导入 CMS 数据获取函数
 import { getPageBySlug } from "@/lib/cms";
-
-// 导入 Metadata 类型
+import { Breadcrumb } from "@/components/Breadcrumb";
 import type { Metadata } from "next";
 
 /**
@@ -30,8 +29,8 @@ export default async function OpennessPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      {/* 页面标题 */}
-      <h1 className="text-2xl font-bold mb-6">信息公开</h1>
+      <Breadcrumb items={[{ label: "学校概况", href: "/about" }, { label: "信息公开" }]} />
+      <h1 className="text-2xl font-bold mb-6 font-serif-title">信息公开</h1>
       
       {page ? (
         <>

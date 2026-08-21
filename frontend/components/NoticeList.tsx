@@ -11,6 +11,7 @@
 
 // 导入通知列表项类型
 import type { NoticeListItem } from "@/lib/types";
+import { noticeLevelLabel } from "@/lib/labels";
 
 // 导入 Next.js Link 组件
 import Link from "next/link";
@@ -21,7 +22,7 @@ import Link from "next/link";
  * @param notices - 通知列表数组
  * @returns JSX 元素
  */
-export function NoticeList({ notices }: { notices: NoticeListItem[] }) {
+export function NoticeList({ notices, showLevel = false }: { notices: NoticeListItem[]; showLevel?: boolean }) {
   // 无通知时显示占位提示
   if (notices.length === 0) {
     return (
@@ -65,6 +66,11 @@ export function NoticeList({ notices }: { notices: NoticeListItem[] }) {
               )}
               {/* 通知标题 */}
               {notice.title}
+              {showLevel && notice.level && (
+                <span className="ml-2 inline-block rounded bg-thu-purple-light px-1.5 py-0.5 text-xs text-thu-purple-dark font-normal">
+                  {noticeLevelLabel(notice.level)}
+                </span>
+              )}
             </span>
 
             {/* 日期区域 */}

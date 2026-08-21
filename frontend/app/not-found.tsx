@@ -26,9 +26,15 @@ export default function NotFound() {
       {/* 返回首页链接 */}
       <Link
         href="/"
-        className="inline-block px-6 py-2 bg-zinc-900 text-white rounded-full text-sm hover:bg-zinc-700 transition-colors"
+        className="inline-block px-6 py-2 bg-thu-purple text-white rounded text-sm hover:bg-thu-purple-dark transition-colors"
       >
         返回首页
+      </Link>
+      <Link
+        href="/search"
+        className="inline-block ml-3 px-6 py-2 border border-zinc-200 rounded text-sm hover:border-thu-purple hover:text-thu-purple transition-colors"
+      >
+        站内搜索
       </Link>
     </div>
   );

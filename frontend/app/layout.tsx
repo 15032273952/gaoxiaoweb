@@ -16,6 +16,7 @@ import "./globals.css";
 // 导入页面布局组件：顶部导航和底部页脚
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { BackToTop } from "@/components/BackToTop";
 
 // 导入 CMS 数据获取函数，用于获取网站配置信息（如网站名称）
 import { getSiteSetting } from "@/lib/cms";
@@ -63,15 +64,22 @@ export default async function RootLayout({
     <html lang="zh-CN" className="h-full">
       <body className="min-h-full flex flex-col bg-white text-zinc-900 antialiased">
         {/* SiteHeader: 顶部导航栏，接收 siteName 作为网站名称显示 */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-thu-purple-dark"
+        >
+          跳到主要内容
+        </a>
         <SiteHeader siteName={siteName} />
         
         {/* main: 主内容区域，flex-1 使其占据剩余空间（推动页脚到底部） */}
-        <main className="flex-1">
+        <main id="main-content" className="flex-1">
           {children}
         </main>
         
         {/* SiteFooter: 深紫底页脚（页脚链接、联系方式、备案信息） */}
         <SiteFooter setting={setting} />
+        <BackToTop />
       </body>
     </html>
   );

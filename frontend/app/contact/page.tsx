@@ -1,73 +1,69 @@
 /**
- * 联系我们页面 - app/contact/page.tsx
- * 
- * 路由：/contact
- * 功能：显示学校联系方式
- * 
- * 数据来源：从 CMS 获取网站全局配置（SiteSetting）
+ * 联系我们：可点击电话/邮箱，附带站内搜索入口
  */
 
-// 导入 CMS 数据获取函数
 import { getSiteSetting } from "@/lib/cms";
-
-// 导入 Metadata 类型
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { SearchForm } from "@/components/SearchForm";
 import type { Metadata } from "next";
 
-/**
- * 页面 SEO 元数据
- */
 export const metadata: Metadata = {
   title: "联系我们 - 高校官网",
   description: "高校联系方式。",
 };
 
-/**
- * 联系我们页面组件
- */
 export default async function ContactPage() {
-  // 获取网站全局配置
   const setting = await getSiteSetting().catch(() => null);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      {/* 页面标题 */}
-      <h1 className="text-2xl font-bold mb-6">联系我们</h1>
-      
-      {/* 渲染联系方式 */}
+      <Breadcrumb items={[{ label: "联系我们" }]} />
+      <h1 className="text-2xl font-bold mb-6 font-serif-title">联系我们</h1>
+
       {setting ? (
-        <div className="space-y-4 text-zinc-700">
-          {/* 地址 */}
+        <div className="space-y-5 text-zinc-700">
           {setting.address && (
             <div>
               <h2 className="font-semibold mb-1">地址</h2>
               <p className="text-sm">{setting.address}</p>
             </div>
           )}
-          {/* 邮编 */}
           {setting.postcode && (
             <div>
               <h2 className="font-semibold mb-1">邮编</h2>
               <p className="text-sm">{setting.postcode}</p>
             </div>
           )}
-          {/* 联系电话 */}
           {setting.generalPhone && (
             <div>
               <h2 className="font-semibold mb-1">联系电话</h2>
-              <p className="text-sm">{setting.generalPhone}</p>
+              <p className="text-sm">
+                <a href={`tel:${setting.generalPhone}`} className="text-thu-purple hover:underline">
+                  {setting.generalPhone}
+                </a>
+              </p>
             </div>
           )}
-          {/* 邮箱 */}
           {setting.generalEmail && (
             <div>
               <h2 className="font-semibold mb-1">邮箱</h2>
-              <p className="text-sm">{setting.generalEmail}</p>
+              <p className="text-sm">
+                <a href={`mailto:${setting.generalEmail}`} className="text-thu-purple hover:underline">
+                  {setting.generalEmail}
+                </a>
+              </p>
             </div>
           )}
         </div>
       ) : (
         <p className="text-zinc-400">暂无内容</p>
       )}
+
+      <section className="mt-10 pt-8 border-t border-zinc-100">
+        <h2 className="font-semibold mb-3">查找内容</h2>
+        <p className="text-sm text-zinc-500 mb-3">可通过关键词检索新闻、通知、师资与部门。</p>
+        <SearchForm id="contact-search" />
+      </section>
     </div>
   );
 }

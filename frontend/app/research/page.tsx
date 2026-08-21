@@ -9,8 +9,7 @@
 
 // 导入 CMS 数据获取函数
 import { getPageBySlug } from "@/lib/cms";
-
-// 导入 Metadata 类型
+import { Breadcrumb } from "@/components/Breadcrumb";
 import type { Metadata } from "next";
 
 /**
@@ -30,8 +29,8 @@ export default async function ResearchPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      {/* 页面标题 */}
-      <h1 className="text-2xl font-bold mb-6">科学研究</h1>
+      <Breadcrumb items={[{ label: "科学研究" }]} />
+      <h1 className="text-2xl font-bold mb-6 font-serif-title">科学研究</h1>
       
       {/* 渲染页面内容 */}
       {page ? (

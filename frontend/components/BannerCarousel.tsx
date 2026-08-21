@@ -1,22 +1,35 @@
 /**
- * BannerCarousel - 主视觉轮播图组件（清华官网风格）
+ * BannerCarousel - 主视觉轮播图（客户端组件，自动切换）
  *
- * 首页顶部大幅焦点图区域：
- * 1. 加高轮播区域（桌面端 28rem），视觉更大气
- * 2. 图片底部叠加紫色渐变遮罩 + 衬线体大标题
- * 3. 标题左侧金色装饰条点缀，层级清晰
- * 4. 图片可点击跳转链接，支持新标签页打开
- * 5. 无图片时使用紫色渐变占位背景
- *
- * 使用方法：
- * <BannerCarousel banners={banners} />
+ * 无 JS 时仍展示第一张；有 JS 后按间隔轮播，并提供指示点与左右切换。
  */
+
+"use client";
 
 import type { BannerItem } from "@/lib/types";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+
+const INTERVAL_MS = 6000;
 
 export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
-  // 无轮播内容时显示紫色渐变占位
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const go = useCallback(
+    (next: number) => {
+      if (banners.length === 0) return;
+      setIndex(((next % banners.length) + banners.length) % banners.length);
+    },
+    [banners.length],
+  );
+
+  useEffect(() => {
+    if (banners.length <= 1 || paused) return;
+    const timer = window.setInterval(() => go(index + 1), INTERVAL_MS);
+    return () => window.clearInterval(timer);
+  }, [banners.length, go, index, paused]);
+
   if (banners.length === 0) {
     return (
       <div className="w-full h-72 md:h-[28rem] bg-gradient-to-br from-thu-purple to-thu-purple-dark flex items-center justify-center text-white/70 font-serif-title text-xl">
@@ -26,68 +39,106 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
   }
 
   return (
-    <div className="w-full overflow-hidden">
-      {/* 相对定位容器：移动端 h-72，桌面端 28rem（约 448px）大幅焦点图 */}
-      <div className="relative w-full h-72 md:h-[28rem]">
-        {banners.map((banner, i) => {
-          const content = (
-            <div
-              key={banner.id}
-              // 所有轮播项绝对定位叠加，通过 opacity 淡入淡出
-              className={`absolute inset-0 transition-opacity duration-700 ${
-                i === 0 ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              {banner.imageUrl ? (
-                <img
-                  src={banner.imageUrl}
-                  alt={banner.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                // 无图片时使用紫色渐变占位，保持视觉统一
-                <div className="w-full h-full bg-gradient-to-br from-thu-purple to-thu-purple-dark flex items-center justify-center text-white/80 font-serif-title text-2xl px-8 text-center">
-                  {banner.title}
-                </div>
-              )}
-
-              {/* 底部渐变遮罩 + 标题（清华风格：深色渐变 + 衬线大标题） */}
-              {banner.title && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-6 md:px-10 pb-6 md:pb-8 pt-20">
-                  <div className="mx-auto max-w-6xl flex items-start gap-3">
-                    {/* 金色装饰竖条 */}
-                    <span className="mt-1.5 flex-shrink-0 w-1 h-7 md:h-9 bg-thu-gold rounded-sm" />
-                    <h2 className="text-white text-xl md:text-3xl font-bold font-serif-title leading-snug drop-shadow-md line-clamp-2">
-                      {banner.title}
-                    </h2>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-
-          // 有链接时包裹可点击元素
-          if (banner.linkUrl) {
-            return banner.openInNewTab ? (
-              <a
-                key={banner.id}
-                href={banner.linkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full h-full"
-              >
-                {content}
-              </a>
+    <div
+      className="relative w-full h-72 md:h-[28rem] overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      aria-roledescription="carousel"
+      aria-label="焦点图"
+    >
+      {banners.map((banner, i) => {
+        const content = (
+          <div
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              i === index ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+            aria-hidden={i !== index}
+          >
+            {banner.imageUrl ? (
+              <img
+                src={banner.imageUrl}
+                alt={banner.title}
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <Link key={banner.id} href={banner.linkUrl} className="block w-full h-full">
-                {content}
-              </Link>
-            );
-          }
+              <div className="w-full h-full bg-gradient-to-br from-thu-purple to-thu-purple-dark flex items-center justify-center text-white/80 font-serif-title text-2xl px-8 text-center">
+                {banner.title}
+              </div>
+            )}
 
-          return content;
-        })}
-      </div>
+            {banner.title && (
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-6 md:px-10 pb-6 md:pb-8 pt-20">
+                <div className="mx-auto max-w-6xl flex items-start gap-3">
+                  <span className="mt-1.5 flex-shrink-0 w-1 h-7 md:h-9 bg-thu-gold rounded-sm" />
+                  <h2 className="text-white text-xl md:text-3xl font-bold font-serif-title leading-snug drop-shadow-md line-clamp-2">
+                    {banner.title}
+                  </h2>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+        if (banner.linkUrl) {
+          const wrapClass = i === index ? "block" : "block pointer-events-none";
+          return banner.openInNewTab ? (
+            <a
+              key={banner.id}
+              href={banner.linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={wrapClass}
+            >
+              {content}
+            </a>
+          ) : (
+            <Link key={banner.id} href={banner.linkUrl} className={wrapClass}>
+              {content}
+            </Link>
+          );
+        }
+
+        return (
+          <div key={banner.id} className={i === index ? undefined : "pointer-events-none"}>
+            {content}
+          </div>
+        );
+      })}
+
+      {banners.length > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="上一张"
+            onClick={() => go(index - 1)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/35 text-white hover:bg-black/55"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="下一张"
+            onClick={() => go(index + 1)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/35 text-white hover:bg-black/55"
+          >
+            ›
+          </button>
+          <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
+            {banners.map((b, i) => (
+              <button
+                key={b.id}
+                type="button"
+                aria-label={`切换到第 ${i + 1} 张`}
+                aria-current={i === index}
+                onClick={() => go(i)}
+                className={`h-2 rounded-full transition-all ${
+                  i === index ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

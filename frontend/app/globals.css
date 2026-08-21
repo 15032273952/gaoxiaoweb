@@ -92,3 +92,32 @@ h1, h2, h3, .font-serif-title {
   background: var(--thu-purple);
   border-radius: 1px;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/**
+ * 详情页正文容器：字号由工具条通过根元素 CSS 变量控制，
+ * 未设置时回退为默认 16px
+ */
+.article-body {
+  font-size: var(--article-font-size, 16px);
+}
+
+/**
+ * 打印样式：打印详情页时隐藏导航/页脚等界面元素，
+ * 链接保持正文色，保证纸质阅读效果
+ */
+@media print {
+  header, footer, .print-hidden {
+    display: none !important;
+  }
+  main {
+    width: 100% !important;
+  }
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}

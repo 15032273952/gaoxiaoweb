@@ -15,6 +15,7 @@
  */
 
 import Link from "next/link";
+import { SearchForm } from "@/components/SearchForm";
 
 /**
  * 导航菜单项配置（支持二级下拉菜单）
@@ -105,9 +106,14 @@ export function SiteHeader({ siteName }: { siteName?: string }) {
               </span>
             </span>
           </Link>
-          {/* 右侧标语：移动端隐藏 */}
-          <div className="hidden md:block text-right text-sm text-zinc-400 font-serif-title">
-            自强不息 · 厚德载物
+          {/* 右侧：搜索 + 标语 */}
+          <div className="flex items-center gap-6">
+            <div className="hidden md:block">
+              <SearchForm compact id="header-search" />
+            </div>
+            <div className="hidden lg:block text-right text-sm text-zinc-400 font-serif-title">
+              自强不息 · 厚德载物
+            </div>
           </div>
         </div>
       </div>
@@ -167,6 +173,9 @@ export function SiteHeader({ siteName }: { siteName?: string }) {
           </svg>
         </summary>
         <ul className="border-t border-white/15 pb-2">
+          <li className="px-4 py-3">
+            <SearchForm compact={false} id="mobile-search" />
+          </li>
           {navItems.map((item) => (
             <li key={item.href}>
               <Link

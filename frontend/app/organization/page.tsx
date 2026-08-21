@@ -1,63 +1,96 @@
 /**
- * 机构设置页面 - app/organization/page.tsx
- * 
- * 路由：/organization
- * 功能：以网格卡片形式展示学校各部门信息
- * 
- * 数据来源：从 CMS 获取部门列表
+ * 机构设置：部门检索与职责展开
  */
 
-// 导入 CMS 数据获取函数
 import { getDepartments } from "@/lib/cms";
-
-// 导入 Metadata 类型
+import { Breadcrumb } from "@/components/Breadcrumb";
 import type { Metadata } from "next";
 
-/**
- * 页面 SEO 元数据
- */
 export const metadata: Metadata = {
   title: "机构设置 - 高校官网",
   description: "高校机构设置与部门信息。",
 };
 
-/**
- * 机构设置页面组件
- */
-export default async function OrganizationPage() {
-  // 获取部门列表
+type Props = { searchParams: Promise<{ q?: string | string[] }> };
+
+export default async function OrganizationPage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const q = ((Array.isArray(sp.q) ? sp.q[0] : sp.q) ?? "").trim().toLowerCase();
   const departments = await getDepartments().catch(() => []);
+  const filtered = q
+    ? departments.filter((d) =>
+        [d.name, d.intro, d.responsibilities, d.contactOffice]
+          .join(" ")
+          .toLowerCase()
+          .includes(q),
+      )
+    : departments;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* 页面标题 */}
-      <h1 className="text-2xl font-bold mb-6">机构设置</h1>
-      
-      {/* 判断是否有数据 */}
-      {departments.length > 0 ? (
-        // 三列网格布局
+      <Breadcrumb items={[{ label: "学校概况", href: "/about" }, { label: "机构设置" }]} />
+      <h1 className="text-2xl font-bold mb-6 font-serif-title">机构设置</h1>
+
+      <form action="/organization" method="get" className="flex gap-2 mb-6 max-w-md">
+        <input
+          name="q"
+          type="search"
+          defaultValue={q}
+          placeholder="检索部门名称或职责"
+          className="flex-1 rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-thu-purple"
+        />
+        <button
+          type="submit"
+          className="rounded bg-thu-purple px-4 py-2 text-sm text-white hover:bg-thu-purple-dark"
+        >
+          检索
+        </button>
+      </form>
+
+      {filtered.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* 遍历渲染每个部门 */}
-          {departments.map((dept) => (
-            // 每个部门一个卡片
-            <div key={dept.id} className="p-4 border border-zinc-200 rounded-lg">
-              {/* 部门名称 */}
+          {filtered.map((dept) => (
+            <article
+              key={dept.id}
+              id={`dept-${dept.id}`}
+              className="p-4 border border-zinc-200 rounded-lg scroll-mt-24"
+            >
               <h2 className="font-semibold text-zinc-900">{dept.name}</h2>
-              {/* 部门简介（可选，最多显示3行） */}
               {dept.intro && (
-                <p className="mt-2 text-sm text-zinc-600 line-clamp-3">{dept.intro}</p>
+                <p className="mt-2 text-sm text-zinc-600">{dept.intro}</p>
               )}
-              {/* 联系方式 */}
-              <div className="mt-3 text-xs text-zinc-400 space-y-1">
+              {dept.responsibilities && (
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-sm text-thu-purple">部门职责</summary>
+                  <p className="mt-2 text-sm text-zinc-600 whitespace-pre-line">
+                    {dept.responsibilities}
+                  </p>
+                </details>
+              )}
+              <div className="mt-3 text-xs text-zinc-500 space-y-1">
                 {dept.contactOffice && <p>办公室：{dept.contactOffice}</p>}
-                {dept.contactPhone && <p>电话：{dept.contactPhone}</p>}
-                {dept.contactEmail && <p>邮箱：{dept.contactEmail}</p>}
+                {dept.contactPhone && (
+                  <p>
+                    电话：
+                    <a href={`tel:${dept.contactPhone}`} className="hover:text-thu-purple">
+                      {dept.contactPhone}
+                    </a>
+                  </p>
+                )}
+                {dept.contactEmail && (
+                  <p>
+                    邮箱：
+                    <a href={`mailto:${dept.contactEmail}`} className="hover:text-thu-purple">
+                      {dept.contactEmail}
+                    </a>
+                  </p>
+                )}
               </div>
-            </div>
+            </article>
           ))}
         </div>
       ) : (
-        <p className="text-zinc-400">暂无内容</p>
+        <p className="text-zinc-400">暂无匹配部门</p>
       )}
     </div>
   );
