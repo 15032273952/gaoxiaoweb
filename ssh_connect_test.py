@@ -14,6 +14,7 @@ SSH 连通性测试工具
 依赖：pip install paramiko
 """
 
+import os
 import sys
 import socket
 from dataclasses import dataclass
@@ -95,12 +96,25 @@ def connect_and_test(cfg: SSHConfig) -> str:
 
 
 def main() -> int:
-    # ===== 连接信息（按需求硬编码；实际使用建议改为环境变量/配置文件） =====
+    # ===== 连接信息（从环境变量读取，禁止硬编码密码） =====
+    # 用法示例：
+    #   export SSH_HOST=... SSH_USER=... SSH_PASSWORD=...
+    #   python ssh_connect_test.py
+    # 也可通过项目根目录 .env 文件提供（已被 .gitignore 忽略）
+    host = os.environ.get("SSH_HOST", "")
+    password = os.environ.get("SSH_PASSWORD", "")
+    if not host or not password:
+        print(
+            "[-] 缺少连接信息：请设置环境变量 SSH_HOST / SSH_PORT / SSH_USER / SSH_PASSWORD",
+            file=sys.stderr,
+        )
+        return 2
+
     cfg = SSHConfig(
-        host="186.241.89.117",
-        port=22,
-        username="root",
-        password="***REDACTED-ROOT-PASSWORD***",
+        host=host,
+        port=int(os.environ.get("SSH_PORT", "22")),
+        username=os.environ.get("SSH_USER", "root"),
+        password=password,
         timeout=10.0,
     )
 
