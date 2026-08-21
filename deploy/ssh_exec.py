@@ -11,10 +11,25 @@ import os
 import sys
 import paramiko
 
-# 连接信息从环境变量读取（禁止硬编码密码）：
-#   SSH_HOST / SSH_PORT / SSH_USER / SSH_KEY（私钥路径，服务器已禁用密码登录）
-#   SSH_PASSWORD 仅作兼容保留
-# 可写入项目根目录 .env 文件（已被 .gitignore 忽略）
+
+def _load_dotenv():
+    """自动加载项目根目录（脚本上级目录）的 .env（不存在则跳过；已设置的环境变量优先）。"""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(root, ".env")
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                os.environ.setdefault(key.strip(), value.strip())
+
+
+_load_dotenv()
+
+# 连接信息来源：环境变量 > 项目根目录 .env（.env 已被 .gitignore 忽略，密码不进 Git）
+#   SSH_HOST / SSH_PORT / SSH_USER + SSH_KEY（私钥）或 SSH_PASSWORD（密码），密钥优先
 HOST = os.environ.get("SSH_HOST", "")
 PORT = int(os.environ.get("SSH_PORT", "22"))
 USER = os.environ.get("SSH_USER", "root")
