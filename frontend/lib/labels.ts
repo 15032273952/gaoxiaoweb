@@ -62,6 +62,15 @@ export function parseNoticeLevel(
     : undefined;
 }
 
+/** 解析年份筛选，非法则视为未筛选 */
+export function parseYear(value: string | string[] | undefined): number | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const n = Number.parseInt(raw ?? "", 10);
+  const thisYear = new Date().getFullYear();
+  if (!Number.isFinite(n) || n < 1990 || n > thisYear + 1) return undefined;
+  return n;
+}
+
 /** 解析页码，非法或小于 1 时回退为 1 */
 export function parsePage(value: string | string[] | undefined): number {
   const raw = Array.isArray(value) ? value[0] : value;

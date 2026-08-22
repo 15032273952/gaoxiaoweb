@@ -8,7 +8,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "师资队伍 - 高校官网",
+  title: "师资队伍",
   description: "高校师资队伍公开信息。",
 };
 
@@ -26,7 +26,7 @@ export default async function FacultyPage({ searchParams }: Props) {
   const profiles = await getFacultyProfiles().catch(() => []);
   const colleges = [...new Set(profiles.map((p) => p.college).filter(Boolean))].sort();
 
-  const filtered = profiles.filter((f) => {
+  const filtered = [...profiles].sort((a, b) => a.name.localeCompare(b.name, "zh-CN")).filter((f) => {
     if (college && f.college !== college) return false;
     if (!q) return true;
     const blob = [f.name, f.title, f.college, f.researchFields].join(" ").toLowerCase();
@@ -93,6 +93,8 @@ export default async function FacultyPage({ searchParams }: Props) {
       )}
 
       {filtered.length > 0 ? (
+        <>
+        <p className="mb-4 text-sm text-zinc-400">共 {filtered.length} 人</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filtered.map((f) => (
             <article
@@ -145,6 +147,7 @@ export default async function FacultyPage({ searchParams }: Props) {
             </article>
           ))}
         </div>
+        </>
       ) : (
         <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
           暂无匹配的师资信息

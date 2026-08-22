@@ -1,5 +1,5 @@
 /**
- * 联系我们：可点击电话/邮箱，附带站内搜索入口
+ * 联系我们：联系方式 + 邮件咨询表单
  */
 
 import { getSiteSetting } from "@/lib/cms";
@@ -8,7 +8,7 @@ import { SearchForm } from "@/components/SearchForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "联系我们 - 高校官网",
+  title: "联系我们",
   description: "高校联系方式。",
 };
 
@@ -60,6 +60,46 @@ export default async function ContactPage() {
           </div>
         ) : (
           <p className="text-zinc-400 py-8 text-center">暂无内容</p>
+        )}
+
+        {setting?.generalEmail && (
+          <section className="mt-8 pt-8 border-t border-zinc-100">
+            <h2 className="text-lg font-bold mb-2 font-serif-title text-zinc-900">邮件咨询</h2>
+            <p className="text-xs sm:text-sm text-zinc-500 mb-4">
+              将调用本机邮件客户端发送至学校邮箱，不会在网站服务器留存内容。
+            </p>
+            <form action={`mailto:${setting.generalEmail}`} method="get" className="space-y-3">
+              <div>
+                <label htmlFor="mail-subject" className="block text-sm mb-1">
+                  主题
+                </label>
+                <input
+                  id="mail-subject"
+                  name="subject"
+                  required
+                  className="w-full rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-thu-purple"
+                />
+              </div>
+              <div>
+                <label htmlFor="mail-body" className="block text-sm mb-1">
+                  内容
+                </label>
+                <textarea
+                  id="mail-body"
+                  name="body"
+                  required
+                  rows={5}
+                  className="w-full rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-thu-purple"
+                />
+              </div>
+              <button
+                type="submit"
+                className="rounded bg-thu-purple px-4 py-2 text-sm text-white hover:bg-thu-purple-dark"
+              >
+                打开邮件客户端
+              </button>
+            </form>
+          </section>
         )}
 
         <section className="mt-8 pt-8 border-t border-zinc-100">

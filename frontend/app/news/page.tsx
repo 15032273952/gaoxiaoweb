@@ -1,5 +1,5 @@
 /**
- * 新闻列表页 - 支持分类筛选与分页
+ * 新闻列表：分类、年份、分页
  */
 
 import { getArticles } from "@/lib/cms";
@@ -10,24 +10,30 @@ import {
   ARTICLE_CATEGORIES,
   parseArticleCategory,
   parsePage,
+  parseYear,
 } from "@/lib/labels";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "新闻列表 - 高校官网",
+  title: "校园新闻",
   description: "高校校园新闻、学术动态与媒体报道。",
 };
 
 const PAGE_SIZE = 12;
 
 type Props = {
-  searchParams: Promise<{ category?: string | string[]; page?: string | string[] }>;
+  searchParams: Promise<{
+    category?: string | string[];
+    year?: string | string[];
+    page?: string | string[];
+  }>;
 };
 
-function newsHref(category?: string, page?: number) {
+function newsHref(category?: string, year?: number, page?: number) {
   const params = new URLSearchParams();
   if (category) params.set("category", category);
+  if (year) params.set("year", String(year));
   if (page && page > 1) params.set("page", String(page));
   const qs = params.toString();
   return qs ? `/news?${qs}` : "/news";
@@ -36,11 +42,20 @@ function newsHref(category?: string, page?: number) {
 export default async function NewsPage({ searchParams }: Props) {
   const sp = await searchParams;
   const category = parseArticleCategory(sp.category);
+  const year = parseYear(sp.year);
   const page = parsePage(sp.page);
   const articles = await getArticles().catch(() => []);
-  const filtered = category
-    ? articles.filter((a) => a.category === category)
-    : articles;
+  const years = [...new Set(
+    articles
+      .map((a) => new Date(a.publishedAt).getFullYear())
+      .filter((y) => Number.isFinite(y)),
+  )].sort((a, b) => b - a);
+
+  const filtered = articles.filter((a) => {
+    if (category && a.category !== category) return false;
+    if (year && new Date(a.publishedAt).getFullYear() !== year) return false;
+    return true;
+  });
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const slice = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
@@ -53,29 +68,34 @@ export default async function NewsPage({ searchParams }: Props) {
       {/* 移动端横向无阻滑动筛选栏 */}
       <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
         <Link
-          href="/news"
-          className={
-            !category
-              ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
-              : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
-          }
+          href={newsHref(undefined, year)}
+          className={chipClass(!category)}
         >
           全部新闻
         </Link>
         {ARTICLE_CATEGORIES.map((c) => (
           <Link
             key={c.value}
-            href={newsHref(c.value)}
-            className={
-              category === c.value
-                ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
-                : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
-            }
+            href={newsHref(c.value, year)}
+            className={chipClass(category === c.value)}
           >
             {c.label}
           </Link>
         ))}
       </div>
+
+      {years.length > 1 && (
+        <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+          <Link href={newsHref(category)} className={chipClass(!year)}>
+            全部年份
+          </Link>
+          {years.map((y) => (
+            <Link key={y} href={newsHref(category, y)} className={chipClass(year === y)}>
+              {y}年
+            </Link>
+          ))}
+        </div>
+      )}
 
       {slice.length > 0 ? (
         <>
@@ -91,15 +111,21 @@ export default async function NewsPage({ searchParams }: Props) {
             <Pagination
               page={safePage}
               totalPages={totalPages}
-              hrefFor={(p) => newsHref(category, p)}
+              hrefFor={(p) => newsHref(category, year, p)}
             />
           </div>
         </>
       ) : (
         <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
-          该分类下暂无新闻
+          暂无符合条件的新闻
         </div>
       )}
     </div>
   );
+}
+
+function chipClass(active: boolean) {
+  return active
+    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors";
 }

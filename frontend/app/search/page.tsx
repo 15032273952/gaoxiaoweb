@@ -21,7 +21,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const sp = await searchParams;
   const q = Array.isArray(sp.q) ? sp.q[0] : sp.q;
   return {
-    title: q ? `搜索：${q} - 高校官网` : "站内搜索 - 高校官网",
+    title: q ? `搜索：${q}` : "站内搜索",
     description: "检索校园新闻、通知公告、师资与部门信息。",
   };
 }

@@ -10,12 +10,13 @@
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { NewsCard } from "@/components/NewsCard";
 import { NoticeList } from "@/components/NoticeList";
-import { getBanners, getArticles, getNotices, getSiteSetting } from "@/lib/cms";
+import { getBanners, getArticles, getNotices } from "@/lib/cms";
+import { articleCategoryLabel, formatDate } from "@/lib/labels";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "首页 - 高校官网",
+  title: "首页",
   description: "高校官方网站首页，展示要闻轮播、通知公告与新闻列表。",
 };
 
@@ -108,16 +109,15 @@ export default async function HomePage() {
     getBanners().catch(() => []),
     getArticles().catch(() => []),
     getNotices().catch(() => []),
-    getSiteSetting().catch(() => null),
   ]);
 
   const headline = articles[0];
   const listArticles = articles.slice(1, 6);
   const latestNotices = notices.slice(0, 8);
+  const academic = articles.filter((a) => a.category === "academic").slice(0, 4);
 
   return (
     <div className="w-full">
-      {/* ===== 主视觉轮播区（全宽） ===== */}
       <section>
         <BannerCarousel banners={banners} />
       </section>
@@ -169,7 +169,7 @@ export default async function HomePage() {
                         </p>
                       )}
                       <div className="mt-3 text-xs text-zinc-400 font-mono">
-                        {new Date(headline.publishedAt).toLocaleDateString("zh-CN")}
+                        {articleCategoryLabel(headline.category)} · {formatDate(headline.publishedAt)}
                       </div>
                     </div>
                   </Link>
@@ -188,7 +188,7 @@ export default async function HomePage() {
           </div>
 
           {/* 右侧 1/3：通知公告卡片 */}
-          <aside className="lg:mt-0">
+          <aside className="space-y-6">
             <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-md transition-shadow">
               {/* 卡片标题栏：深紫微渐变底色 */}
               <div className="bg-gradient-to-r from-thu-purple to-thu-purple-dark text-white px-4 sm:px-5 py-3.5 flex items-center justify-between border-b-2 border-thu-gold/80">
@@ -207,6 +207,32 @@ export default async function HomePage() {
                 <NoticeList notices={latestNotices} />
               </div>
             </div>
+
+            {academic.length > 0 && (
+              <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-md transition-shadow">
+                <div className="px-5 py-3 flex items-center justify-between border-b border-zinc-100">
+                  <h2 className="font-bold font-serif-title text-thu-purple-dark">学术动态</h2>
+                  <Link
+                    href="/news?category=academic"
+                    className="text-xs text-zinc-400 hover:text-thu-purple"
+                  >
+                    更多 &gt;
+                  </Link>
+                </div>
+                <ul className="px-5 py-2 divide-y divide-zinc-100">
+                  {academic.map((a) => (
+                    <li key={a.id} className="py-2.5">
+                      <Link
+                        href={`/news/${a.slug}`}
+                        className="text-sm text-zinc-700 hover:text-thu-purple line-clamp-2"
+                      >
+                        {a.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </aside>
         </div>
       </section>

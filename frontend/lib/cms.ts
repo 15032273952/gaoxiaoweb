@@ -25,9 +25,11 @@ import type {
   FacultyProfile,
   PageContent,
 } from "./types";
+import { articleCategoryLabel, noticeLevelLabel } from "./labels";
 
 const CMS_BASE_URL =
   process.env.CMS_API_URL ?? "http://localhost:1337/api";
+const CMS_ORIGIN = CMS_BASE_URL.replace(/\/api\/?$/, "");
 const CMS_TOKEN = process.env.CMS_API_TOKEN ?? "";
 
 const FETCH_TIMEOUT_MS = 15_000;
@@ -93,18 +95,64 @@ async function cmsFetch(
   }
 }
 
-function mediaUrl(media?: StrapiMedia | null): string | undefined {
-  return media?.data?.attributes?.url ?? undefined;
+/** 相对路径补全为 CMS 源站绝对地址（兼容 Strapi 4/5 媒体结构） */
+function resolveMediaUrl(url?: string): string | undefined {
+  if (!url) return undefined;
+  if (/^(https?:|data:|\/\/)/i.test(url)) return url;
+  return `${CMS_ORIGIN}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
-function mediaList(media?: StrapiMediaList | null) {
-  return (
-    media?.data?.map((m) => ({
-      name: m.attributes?.name ?? "附件",
-      url: m.attributes?.url ?? "",
-      size: m.attributes?.size,
-    })) ?? []
-  );
+function pickMediaFields(node: unknown): {
+  url?: string;
+  name?: string;
+  size?: number;
+} {
+  if (!node || typeof node !== "object") return {};
+  const rec = node as Record<string, unknown>;
+  if (typeof rec.url === "string") {
+    return {
+      url: rec.url,
+      name: typeof rec.name === "string" ? rec.name : undefined,
+      size: typeof rec.size === "number" ? rec.size : undefined,
+    };
+  }
+  const attrs = rec.attributes as Record<string, unknown> | undefined;
+  if (attrs && typeof attrs.url === "string") {
+    return {
+      url: attrs.url,
+      name: typeof attrs.name === "string" ? attrs.name : undefined,
+      size: typeof attrs.size === "number" ? attrs.size : undefined,
+    };
+  }
+  return pickMediaFields(rec.data);
+}
+
+function mediaUrl(media?: StrapiMedia | Record<string, unknown> | null): string | undefined {
+  return resolveMediaUrl(pickMediaFields(media).url);
+}
+
+function mediaList(media?: StrapiMediaList | unknown[] | Record<string, unknown> | null) {
+  const raw = media && typeof media === "object" && "data" in media
+    ? (media as { data?: unknown }).data
+    : media;
+  const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+  return list
+    .map((m) => {
+      const fields = pickMediaFields(m);
+      return {
+        name: fields.name ?? "附件",
+        url: resolveMediaUrl(fields.url) ?? "",
+        size: fields.size,
+      };
+    })
+    .filter((m) => m.url);
+}
+
+function relationSlug(rel: unknown): string | undefined {
+  if (!rel || typeof rel !== "object") return undefined;
+  const rec = rel as Record<string, unknown>;
+  if (typeof rec.slug === "string") return rec.slug;
+  return relationSlug(rec.data) ?? relationSlug(rec.attributes);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,7 +204,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
 
 export async function getNotices(): Promise<NoticeListItem[]> {
   const res = await cmsFetch(
-    "/notices?sort=isTop:desc,publishedAt:desc&pagination[pageSize]=100",
+    "/notices?filters[moderationStatus][$eq]=published&sort=isTop:desc,publishedAt:desc&pagination[pageSize]=100",
   );
   if (!isList(res)) return [];
   return res.data.map((n) => ({
@@ -172,7 +220,7 @@ export async function getNotices(): Promise<NoticeListItem[]> {
 
 export async function getNoticeBySlug(slug: string): Promise<NoticeDetail | null> {
   const res = await cmsFetch(
-    `/notices?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=attachments`,
+    `/notices?filters[slug][$eq]=${encodeURIComponent(slug)}&publicationState=live&populate=attachments`,
   );
   if (!isList(res) || res.data.length === 0) return null;
   const n = res.data[0];
@@ -240,7 +288,7 @@ export async function getDepartments(): Promise<DepartmentItem[]> {
     contactPhone: d.contactPhone,
     contactEmail: d.contactEmail,
     sort: d.sort ?? 0,
-    parentSlug: d.parent?.data?.attributes?.slug,
+    parentSlug: relationSlug(d.parent),
   }));
 }
 
@@ -307,24 +355,29 @@ export async function searchSite(q: string): Promise<SiteSearchHit[]> {
     if (
       includesQuery(a.title, query) ||
       includesQuery(a.summary, query) ||
-      includesQuery(a.category, query)
+      includesQuery(a.category, query) ||
+      includesQuery(articleCategoryLabel(a.category), query)
     ) {
       hits.push({
         kind: "news",
         title: a.title,
         href: `/news/${a.slug}`,
-        snippet: a.summary || a.category,
+        snippet: a.summary || articleCategoryLabel(a.category),
       });
     }
   }
 
   for (const n of notices) {
-    if (includesQuery(n.title, query) || includesQuery(n.noticeNo, query)) {
+    if (
+      includesQuery(n.title, query) ||
+      includesQuery(n.noticeNo, query) ||
+      includesQuery(noticeLevelLabel(n.level), query)
+    ) {
       hits.push({
         kind: "notice",
         title: n.title,
         href: `/notices/${n.slug}`,
-        snippet: n.noticeNo ?? "通知公告",
+        snippet: [n.noticeNo, noticeLevelLabel(n.level)].filter(Boolean).join(" · ") || "通知公告",
       });
     }
   }

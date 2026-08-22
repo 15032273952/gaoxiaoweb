@@ -36,7 +36,7 @@ export const securityHeaders = [
       "font-src 'self' data:",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' mailto:",
     ].join("; "),
   },
 ];

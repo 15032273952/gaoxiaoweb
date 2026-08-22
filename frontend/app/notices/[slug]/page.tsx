@@ -6,6 +6,7 @@ import { getNoticeBySlug, getNotices } from "@/lib/cms";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ArticleToolbar } from "@/components/ArticleToolbar";
 import { PrevNextNav } from "@/components/PrevNextNav";
+import { AttachmentList } from "@/components/AttachmentList";
 import { formatDate, noticeLevelLabel } from "@/lib/labels";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -14,7 +15,8 @@ import type { Metadata } from "next";
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return [];
+  const notices = await getNotices().catch(() => []);
+  return notices.map((n) => ({ slug: n.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -85,26 +87,7 @@ export default async function NoticeDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: notice.contentHtml }}
       />
 
-      {notice.attachments.length > 0 && (
-        <section className="mt-8 border-t border-zinc-200 pt-6">
-          <h2 className="text-lg font-semibold mb-3">附件下载</h2>
-          <ul className="space-y-2">
-            {notice.attachments.map((att, i) => (
-              <li key={i}>
-                <a
-                  href={att.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-thu-purple hover:underline text-sm"
-                >
-                  {att.name}
-                  {att.size ? ` (${(att.size / 1024).toFixed(1)} KB)` : ""}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <AttachmentList items={notice.attachments} />
 
       <PrevNextNav
         items={allNotices.map((n) => ({ slug: n.slug, title: n.title }))}

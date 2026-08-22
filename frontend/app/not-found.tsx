@@ -18,7 +18,7 @@ export default function NotFound() {
     // py-32: 很大的垂直内边距，让内容垂直居中
     <div className="mx-auto max-w-3xl px-4 py-32 text-center">
       {/* 404 大标题 */}
-      <h1 className="text-4xl font-bold text-zinc-300 mb-4">404</h1>
+      <h1 className="text-4xl font-bold text-zinc-300 mb-4 font-serif-title">404</h1>
       
       {/* 提示文字 */}
       <p className="text-lg text-zinc-600 mb-8">页面未找到</p>

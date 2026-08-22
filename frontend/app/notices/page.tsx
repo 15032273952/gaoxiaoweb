@@ -11,7 +11,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "通知公告 - 高校官网",
+  title: "通知公告",
   description: "高校通知公告列表。",
 };
 

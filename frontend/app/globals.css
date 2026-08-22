@@ -84,6 +84,9 @@
 
   --color-thu-surface-warm: var(--thu-surface-warm);
   --color-thu-surface-muted: var(--thu-surface-muted);
+
+  /* 介于 zinc-100 与 zinc-200 之间的更浅边框灰（卡片用） */
+  --color-zinc-150: #ebebef;
 }
 
 /**
