@@ -1,7 +1,7 @@
 export default {
   "collectionName": "components_shared_footer_link",
   "info": {
-    "displayName": "Footer Link",
+    "displayName": "页脚链接",
     "icon": "link",
     "description": "页脚链接"
   },
