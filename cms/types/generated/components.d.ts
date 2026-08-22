@@ -4,7 +4,7 @@ export interface SharedFooterLink extends Struct.ComponentSchema {
   collectionName: 'components_shared_footer_link';
   info: {
     description: '\u9875\u811A\u94FE\u63A5';
-    displayName: 'Footer Link';
+    displayName: '\u9875\u811A\u94FE\u63A5';
     icon: 'link';
   };
   attributes: {
