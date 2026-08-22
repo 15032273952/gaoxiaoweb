@@ -41,21 +41,21 @@ export default async function NoticesPage({ searchParams }: Props) {
   const slice = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
       <Breadcrumb items={[{ label: "新闻公告", href: "/news" }, { label: "通知公告" }]} />
-      <h1 className="text-2xl font-bold mb-6 font-serif-title">通知公告</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900">通知公告</h1>
 
-      {/* 级别筛选：全部 / 校级 / 部门 */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      {/* 级别筛选：全部 / 校级 / 部门，支持移动端横向滑动 */}
+      <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
         <Link
           href="/notices"
           className={
             !level
-              ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-              : "px-3 py-1.5 text-sm rounded border border-zinc-200 hover:border-thu-purple hover:text-thu-purple"
+              ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+              : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
           }
         >
-          全部
+          全部级别
         </Link>
         {NOTICE_LEVELS.map((l) => (
           <Link
@@ -63,8 +63,8 @@ export default async function NoticesPage({ searchParams }: Props) {
             href={noticesHref(l.value)}
             className={
               level === l.value
-                ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-                : "px-3 py-1.5 text-sm rounded border border-zinc-200 hover:border-thu-purple hover:text-thu-purple"
+                ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+                : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
             }
           >
             {l.label}
@@ -72,15 +72,23 @@ export default async function NoticesPage({ searchParams }: Props) {
         ))}
       </div>
 
-      {filtered.length > 0 && (
-        <p className="mb-2 text-sm text-zinc-400">共 {filtered.length} 条</p>
+      {filtered.length > 0 ? (
+        <div className="bg-white border border-zinc-150/80 rounded-xl p-4 sm:p-6 shadow-2xs">
+          <p className="mb-4 text-xs sm:text-sm text-zinc-400">共 {filtered.length} 条通知</p>
+          <NoticeList notices={slice} showLevel />
+          <div className="mt-8 border-t border-zinc-100 pt-6">
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              hrefFor={(p) => noticesHref(level, p)}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
+          暂无匹配的通知公告
+        </div>
       )}
-      <NoticeList notices={slice} showLevel />
-      <Pagination
-        page={safePage}
-        totalPages={totalPages}
-        hrefFor={(p) => noticesHref(level, p)}
-      />
     </div>
   );
 }

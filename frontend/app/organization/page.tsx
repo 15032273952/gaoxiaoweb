@@ -27,52 +27,60 @@ export default async function OrganizationPage({ searchParams }: Props) {
     : departments;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
       <Breadcrumb items={[{ label: "学校概况", href: "/about" }, { label: "机构设置" }]} />
-      <h1 className="text-2xl font-bold mb-6 font-serif-title">机构设置</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900">机构设置</h1>
 
-      <form action="/organization" method="get" className="flex gap-2 mb-6 max-w-md">
+      <form action="/organization" method="get" className="flex flex-col sm:flex-row gap-2.5 mb-8 max-w-lg">
         <input
           name="q"
           type="search"
           defaultValue={q}
-          placeholder="检索部门名称或职责"
-          className="flex-1 rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-thu-purple"
+          placeholder="检索部门名称或职责..."
+          className="flex-1 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-thu-purple focus:ring-2 focus:ring-thu-purple/20 transition-all shadow-2xs"
         />
         <button
           type="submit"
-          className="rounded bg-thu-purple px-4 py-2 text-sm text-white hover:bg-thu-purple-dark"
+          className="rounded-xl bg-gradient-to-r from-thu-purple to-thu-purple-dark px-6 py-2.5 text-sm font-medium text-white hover:shadow-md transition-all active-press"
         >
           检索
         </button>
       </form>
 
       {filtered.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filtered.map((dept) => (
             <article
               key={dept.id}
               id={`dept-${dept.id}`}
-              className="p-4 border border-zinc-200 rounded-lg scroll-mt-24"
+              className="bg-white p-5 border border-zinc-150/80 rounded-xl shadow-2xs hover:shadow-md hover:border-thu-purple/30 transition-all duration-200 scroll-mt-24 flex flex-col justify-between"
             >
-              <h2 className="font-semibold text-zinc-900">{dept.name}</h2>
-              {dept.intro && (
-                <p className="mt-2 text-sm text-zinc-600">{dept.intro}</p>
-              )}
-              {dept.responsibilities && (
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-sm text-thu-purple">部门职责</summary>
-                  <p className="mt-2 text-sm text-zinc-600 whitespace-pre-line">
-                    {dept.responsibilities}
-                  </p>
-                </details>
-              )}
-              <div className="mt-3 text-xs text-zinc-500 space-y-1">
+              <div>
+                <div className="flex items-center gap-2.5 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-thu-purple flex-shrink-0" />
+                  <h2 className="font-bold text-base sm:text-lg text-zinc-900 font-serif-title">{dept.name}</h2>
+                </div>
+                {dept.intro && (
+                  <p className="mt-2 text-xs sm:text-sm text-zinc-600 leading-relaxed">{dept.intro}</p>
+                )}
+                {dept.responsibilities && (
+                  <details className="mt-3 group">
+                    <summary className="cursor-pointer text-xs sm:text-sm font-medium text-thu-purple hover:text-thu-purple-dark flex items-center justify-between">
+                      <span>部门主要职责</span>
+                      <span className="text-xs text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <p className="mt-2 text-xs text-zinc-600 bg-thu-purple-50/70 p-3 rounded-lg border border-thu-purple/10 whitespace-pre-line leading-relaxed">
+                      {dept.responsibilities}
+                    </p>
+                  </details>
+                )}
+              </div>
+              <div className="mt-4 pt-3 border-t border-zinc-100 text-xs text-zinc-500 space-y-1.5 font-mono">
                 {dept.contactOffice && <p>办公室：{dept.contactOffice}</p>}
                 {dept.contactPhone && (
                   <p>
                     电话：
-                    <a href={`tel:${dept.contactPhone}`} className="hover:text-thu-purple">
+                    <a href={`tel:${dept.contactPhone}`} className="text-thu-purple hover:underline">
                       {dept.contactPhone}
                     </a>
                   </p>
@@ -80,7 +88,7 @@ export default async function OrganizationPage({ searchParams }: Props) {
                 {dept.contactEmail && (
                   <p>
                     邮箱：
-                    <a href={`mailto:${dept.contactEmail}`} className="hover:text-thu-purple">
+                    <a href={`mailto:${dept.contactEmail}`} className="text-thu-purple hover:underline">
                       {dept.contactEmail}
                     </a>
                   </p>
@@ -90,7 +98,9 @@ export default async function OrganizationPage({ searchParams }: Props) {
           ))}
         </div>
       ) : (
-        <p className="text-zinc-400">暂无匹配部门</p>
+        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
+          暂无匹配部门
+        </div>
       )}
     </div>
   );

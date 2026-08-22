@@ -1,89 +1,88 @@
-﻿/**
+/**
  * NoticeList - 通知列表组件
  *
- * 用于显示通知公告列表，每条通知包含：
- * - 标题（可带置顶标记和文号）
- * - 发布日期
- *
- * 使用方法：
- * <NoticeList notices={notices} />
+ * 优化点：
+ * 1. 左侧日期方块（Date Badge）设计，提升列表辨识度
+ * 2. 置顶与级别标签专属色彩区分（朱砂红/文脉金）
+ * 3. 移动端更宽敞的触控区域与平滑交互
  */
 
-// 导入通知列表项类型
 import type { NoticeListItem } from "@/lib/types";
-import { noticeLevelLabel } from "@/lib/labels";
-
-// 导入 Next.js Link 组件
+import { noticeLevelLabel, noticeLevelBadgeClass } from "@/lib/labels";
 import Link from "next/link";
 
-/**
- * 通知列表组件
- *
- * @param notices - 通知列表数组
- * @returns JSX 元素
- */
-export function NoticeList({ notices, showLevel = false }: { notices: NoticeListItem[]; showLevel?: boolean }) {
-  // 无通知时显示占位提示
+export function NoticeList({
+  notices,
+  showLevel = false,
+}: {
+  notices: NoticeListItem[];
+  showLevel?: boolean;
+}) {
   if (notices.length === 0) {
     return (
-      <p className="text-zinc-400 text-sm py-4">暂无通知</p>
+      <div className="text-zinc-400 text-sm py-6 text-center bg-zinc-50/50 rounded-lg">
+        暂无通知公告
+      </div>
     );
   }
 
-  // 渲染通知列表
-  // ul: 无序列表
-  // divide-y divide-zinc-100: 每个 li 之间有分隔线（浅灰色）
   return (
     <ul className="divide-y divide-zinc-100">
-      {/* 遍历渲染每个通知项 */}
-      {notices.map((notice) => (
-        <li key={notice.id} className="py-3">
-          {/* 通知项链接：标题 + 日期 */}
-          {/* flex: 水平布局 */}
-          {/* items-baseline: 基线对齐（标题和日期垂直对齐） */}
-          {/* justify-between: 两端对齐 */}
-          {/* gap-4: 标题和日期之间 1rem 间距 */}
-          {/* hover:text-blue-700: 悬停时标题变蓝色 */}
-          <Link
-            href={`/notices/${notice.slug}`}
-            className="group flex items-baseline justify-between gap-4 transition-colors"
-          >
-            {/* 标题区域 */}
-            {/* flex-1: 占据剩余空间 */}
-            {/* text-sm: 小字号 */}
-            {/* text-zinc-800: 深灰色文字 */}
-            {/* line-clamp-1: 最多显示 1 行，超出省略 */}
-            <span className="flex-1 text-sm text-zinc-700 group-hover:text-thu-purple line-clamp-1 transition-colors">
-              {/* 置顶标记（可选） */}
-              {notice.isTop && (
-                <span className="inline-block mr-2 text-xs text-red-600 font-normal">[置顶]</span>
-              )}
-              {/* 文号（可选，如"校发〔2024〕1号"） */}
-              {notice.noticeNo && (
-                <span className="inline-block mr-2 text-xs text-zinc-400 font-normal">
-                  {notice.noticeNo}
-                </span>
-              )}
-              {/* 通知标题 */}
-              {notice.title}
-              {showLevel && notice.level && (
-                <span className="ml-2 inline-block rounded bg-thu-purple-light px-1.5 py-0.5 text-xs text-thu-purple-dark font-normal">
-                  {noticeLevelLabel(notice.level)}
-                </span>
-              )}
-            </span>
+      {notices.map((notice) => {
+        const date = new Date(notice.publishedAt);
+        const hasDate = !Number.isNaN(date.getTime());
+        const month = hasDate ? `${date.getMonth() + 1}`.padStart(2, "0") : "--";
+        const day = hasDate ? `${date.getDate()}`.padStart(2, "0") : "--";
+        const year = hasDate ? date.getFullYear() : "";
 
-            {/* 日期区域 */}
-            {/* flex-shrink-0: 不允许缩小 */}
-            {/* text-xs: 最小字号 */}
-            {/* text-zinc-400: 浅灰色 */}
-            <span className="flex-shrink-0 text-xs text-zinc-400">
-              {/* 转换为中文格式日期 */}
-              {new Date(notice.publishedAt).toLocaleDateString("zh-CN")}
-            </span>
-          </Link>
-        </li>
-      ))}
+        return (
+          <li key={notice.id} className="py-3 first:pt-2 last:pb-2">
+            <Link
+              href={`/notices/${notice.slug}`}
+              className="group flex items-center gap-3 sm:gap-4 transition-colors active-press rounded-lg p-1.5 -mx-1.5 hover:bg-thu-purple-50"
+            >
+              {/* 左侧紧凑日期方块 */}
+              <div className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 bg-thu-purple-light/80 border border-thu-purple/10 rounded-lg flex flex-col items-center justify-center text-center group-hover:bg-thu-purple group-hover:text-white transition-colors duration-200">
+                <span className="text-[13px] sm:text-sm font-bold font-mono leading-none group-hover:text-white text-thu-purple-dark">
+                  {month}-{day}
+                </span>
+                <span className="text-[10px] text-zinc-400 group-hover:text-white/80 leading-tight mt-0.5 font-mono">
+                  {year}
+                </span>
+              </div>
+
+              {/* 标题与标签 */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {notice.isTop && (
+                    <span className="inline-block text-[11px] text-white bg-thu-red px-1.5 py-0.2 rounded font-normal shadow-2xs">
+                      置顶
+                    </span>
+                  )}
+                  {showLevel && notice.level && (
+                    <span
+                      className={`inline-block px-1.5 py-0.2 rounded text-[11px] font-medium border ${noticeLevelBadgeClass(
+                        notice.level,
+                      )}`}
+                    >
+                      {noticeLevelLabel(notice.level)}
+                    </span>
+                  )}
+                  {notice.noticeNo && (
+                    <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+                      {notice.noticeNo}
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-sm font-medium text-zinc-800 group-hover:text-thu-purple line-clamp-1 transition-colors mt-0.5">
+                  {notice.title}
+                </div>
+              </div>
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }
