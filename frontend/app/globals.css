@@ -1,52 +1,99 @@
 /**
  * 全局样式文件 - globals.css
  *
- * 设计风格参考清华大学官网（tsinghua.edu.cn）：
+ * 设计风格参考清华大学官网（tsinghua.edu.cn）并融入现代高校多层级视觉系统：
  * - 主色调：清华紫（#660874 系），庄重典雅
- * - 白色背景 + 深灰正文，层次分明
+ * - 辅助文脉色：琉金（#c99b53）、青黛蓝（#1d5b79）、竹青绿（#2d6a4f）、朱砂红（#b93838）
+ * - 表面层级：温润米白、霜紫浅底、微边框与层次阴影，告别死白单调
  * - 标题使用衬线字体（宋体系），正文使用黑体系，符合高校官网排版习惯
  *
  * 包含：
  * 1. TailwindCSS 导入
- * 2. 主题 CSS 变量（清华紫配色体系）
- * 3. 全局字体与排版
+ * 2. 主题 CSS 变量（多层级配色体系）
+ * 3. 全局字体、排版与移动端流体响应工具
  */
 
 /* 导入 TailwindCSS - 自动包含所有基础样式、重置和工具类 */
 @import "tailwindcss";
 
 /**
- * 主题 CSS 变量 —— 清华紫配色体系
- *
- * --thu-purple:      主色（深紫），用于导航条、页脚、版块标题强调
- * --thu-purple-dark: 更深的紫色，用于顶部辅助条、页脚底部、悬停态
- * --thu-purple-light:浅紫，用于卡片悬停底色、标签底色
- * --thu-gold:        点缀金（少量使用，如分隔装饰线）
+ * 主题 CSS 变量 —— 高校多元文脉配色体系
  */
 :root {
+  /* 品牌核心紫系 */
   --thu-purple: #660874;
-  --thu-purple-dark: #4a0655;
+  --thu-purple-dark: #450550;
   --thu-purple-light: #f6eef8;
-  --thu-gold: #c9a063;
+  --thu-purple-50: #fbf7fc;
+  --thu-purple-100: #f3e8f6;
+  --thu-purple-200: #e2c9e9;
+
+  /* 文脉金系（置顶/重点高亮/装饰徽章） */
+  --thu-gold: #c99b53;
+  --thu-gold-dark: #9e7432;
+  --thu-gold-light: #fbf5eb;
+
+  /* 青黛蓝（学术交流/科学研究/媒体） */
+  --thu-blue: #1d5b79;
+  --thu-blue-dark: #143f54;
+  --thu-blue-light: #edf5f9;
+
+  /* 竹青绿（教育教学/师资/招生） */
+  --thu-green: #2d6a4f;
+  --thu-green-dark: #1b4332;
+  --thu-green-light: #edf7f2;
+
+  /* 朱砂红（重要公告/紧急通知/校级级别） */
+  --thu-red: #b93838;
+  --thu-red-dark: #8c2525;
+  --thu-red-light: #fdf2f2;
+
+  /* 表面温润中性色与质感背景 */
+  --thu-surface-warm: #faf9f6;
+  --thu-surface-muted: #f8f9fa;
+  --thu-border-subtle: rgba(102, 8, 116, 0.08);
 }
 
 /**
  * TailwindCSS v4 主题映射
- * 让 thu-* 颜色可以直接作为工具类使用，如 bg-thu-purple / text-thu-purple-dark
+ * 让各类主题色直接作为实用工具类使用
  */
 @theme inline {
   --color-thu-purple: var(--thu-purple);
   --color-thu-purple-dark: var(--thu-purple-dark);
   --color-thu-purple-light: var(--thu-purple-light);
+  --color-thu-purple-50: var(--thu-purple-50);
+  --color-thu-purple-100: var(--thu-purple-100);
+  --color-thu-purple-200: var(--thu-purple-200);
+
   --color-thu-gold: var(--thu-gold);
+  --color-thu-gold-dark: var(--thu-gold-dark);
+  --color-thu-gold-light: var(--thu-gold-light);
+
+  --color-thu-blue: var(--thu-blue);
+  --color-thu-blue-dark: var(--thu-blue-dark);
+  --color-thu-blue-light: var(--thu-blue-light);
+
+  --color-thu-green: var(--thu-green);
+  --color-thu-green-dark: var(--thu-green-dark);
+  --color-thu-green-light: var(--thu-green-light);
+
+  --color-thu-red: var(--thu-red);
+  --color-thu-red-dark: var(--thu-red-dark);
+  --color-thu-red-light: var(--thu-red-light);
+
+  --color-thu-surface-warm: var(--thu-surface-warm);
+  --color-thu-surface-muted: var(--thu-surface-muted);
 }
 
 /**
  * 全局 body 样式
  */
 body {
-  background: #ffffff;
+  background-color: #fafbfc;
   color: #262626;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   /* 正文字体栈：优先系统中文字体，保证中英文混排协调 */
   font-family:
@@ -56,7 +103,7 @@ body {
 
 /**
  * 标题字体层级
- * 高校官网惯用衬线标题（宋体系），显得庄重正式
+ * 高校官网惯用衬线标题（宋体系），显得庄重典雅
  */
 h1, h2, h3, .font-serif-title {
   font-family:
@@ -66,7 +113,7 @@ h1, h2, h3, .font-serif-title {
 
 /**
  * 通用版块标题样式（供各页面复用）
- * 左侧紫色竖条 + 衬线大标题 + 右侧"更多"链接，层次清晰
+ * 左侧紫色渐变竖条 + 衬线大标题 + 右侧"更多"链接，层次清晰
  */
 .section-title {
   display: flex;
@@ -80,17 +127,22 @@ h1, h2, h3, .font-serif-title {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  font-size: 1.375rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--thu-purple-dark);
+}
+@media (min-width: 768px) {
+  .section-title > .section-title-text {
+    font-size: 1.375rem;
+  }
 }
 .section-title > .section-title-text::before {
   content: "";
   display: inline-block;
   width: 0.375rem;
   height: 1.375rem;
-  background: var(--thu-purple);
-  border-radius: 1px;
+  background: linear-gradient(to bottom, var(--thu-purple), var(--thu-purple-dark));
+  border-radius: 2px;
 }
 
 html {
@@ -98,11 +150,45 @@ html {
 }
 
 /**
+ * 隐藏横向滚动条（移动端标签横向滑动体验优化）
+ */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/**
+ * 触控点击微动效
+ */
+.active-press:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/**
  * 详情页正文容器：字号由工具条通过根元素 CSS 变量控制，
- * 未设置时回退为默认 16px
+ * 并对移动端正文图片和表格进行自适应防溢出处理
  */
 .article-body {
   font-size: var(--article-font-size, 16px);
+  line-height: 1.8;
+}
+
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.article-body table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
 }
 
 /**

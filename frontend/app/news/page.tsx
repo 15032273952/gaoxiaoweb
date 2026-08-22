@@ -46,20 +46,21 @@ export default async function NewsPage({ searchParams }: Props) {
   const slice = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
       <Breadcrumb items={[{ label: "新闻公告", href: "/news" }, { label: "校园新闻" }]} />
-      <h1 className="text-2xl font-bold mb-6 font-serif-title">校园新闻</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900">校园新闻</h1>
 
-      <div className="flex flex-wrap gap-2 mb-6">
+      {/* 移动端横向无阻滑动筛选栏 */}
+      <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
         <Link
           href="/news"
           className={
             !category
-              ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-              : "px-3 py-1.5 text-sm rounded border border-zinc-200 hover:border-thu-purple hover:text-thu-purple"
+              ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+              : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
           }
         >
-          全部
+          全部新闻
         </Link>
         {ARTICLE_CATEGORIES.map((c) => (
           <Link
@@ -67,8 +68,8 @@ export default async function NewsPage({ searchParams }: Props) {
             href={newsHref(c.value)}
             className={
               category === c.value
-                ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-                : "px-3 py-1.5 text-sm rounded border border-zinc-200 hover:border-thu-purple hover:text-thu-purple"
+                ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+                : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
             }
           >
             {c.label}
@@ -78,20 +79,26 @@ export default async function NewsPage({ searchParams }: Props) {
 
       {slice.length > 0 ? (
         <>
-          <p className="mb-4 text-sm text-zinc-400">共 {filtered.length} 条</p>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="mb-4 flex items-center justify-between text-xs sm:text-sm text-zinc-400">
+            <span>共 {filtered.length} 篇相关资讯</span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
             {slice.map((a) => (
               <NewsCard key={a.id} article={a} />
             ))}
           </div>
-          <Pagination
-            page={safePage}
-            totalPages={totalPages}
-            hrefFor={(p) => newsHref(category, p)}
-          />
+          <div className="mt-8">
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              hrefFor={(p) => newsHref(category, p)}
+            />
+          </div>
         </>
       ) : (
-        <p className="text-zinc-400 text-sm py-8">该分类暂无新闻</p>
+        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
+          该分类下暂无新闻
+        </div>
       )}
     </div>
   );

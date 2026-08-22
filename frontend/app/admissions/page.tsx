@@ -24,23 +24,25 @@ export const metadata: Metadata = {
  * 招生就业页面组件
  */
 export default async function AdmissionsPage() {
-  // 获取 CMS 中的招生就业页面内容
   const page = await getPageBySlug("admissions").catch(() => null);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
       <Breadcrumb items={[{ label: "招生就业" }]} />
-      <h1 className="text-2xl font-bold mb-6 font-serif-title">招生就业</h1>
-      
-      {/* 渲染页面内容 */}
-      {page ? (
-        <div
-          className="prose prose-zinc max-w-none"
-          dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
-        />
-      ) : (
-        <p className="text-zinc-400">暂无内容</p>
-      )}
+      <div className="bg-white border border-zinc-150/80 rounded-xl p-5 sm:p-8 shadow-2xs">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900 border-b border-zinc-100 pb-4">
+          招生就业
+        </h1>
+        
+        {page ? (
+          <div
+            className="prose prose-zinc max-w-none article-body"
+            dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
+          />
+        ) : (
+          <p className="text-zinc-400 py-8 text-center">暂无内容</p>
+        )}
+      </div>
     </div>
   );
 }

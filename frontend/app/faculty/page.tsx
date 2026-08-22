@@ -34,38 +34,42 @@ export default async function FacultyPage({ searchParams }: Props) {
   });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
       <Breadcrumb items={[{ label: "人才培养", href: "/education" }, { label: "师资队伍" }]} />
-      <h1 className="text-2xl font-bold mb-6 font-serif-title">师资队伍</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900">师资队伍</h1>
 
-      <form action="/faculty" method="get" className="flex flex-wrap gap-2 mb-4">
+      {/* 检索表单 */}
+      <form action="/faculty" method="get" className="flex flex-col sm:flex-row gap-2.5 mb-6">
         {college && <input type="hidden" name="college" value={college} />}
-        <input
-          name="q"
-          type="search"
-          defaultValue={qRaw}
-          placeholder="按姓名、职称、研究方向检索"
-          className="flex-1 min-w-48 rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-thu-purple"
-        />
+        <div className="relative flex-1">
+          <input
+            name="q"
+            type="search"
+            defaultValue={qRaw}
+            placeholder="按姓名、职称、研究方向检索学者"
+            className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-thu-purple focus:ring-2 focus:ring-thu-purple/20 transition-all shadow-2xs"
+          />
+        </div>
         <button
           type="submit"
-          className="rounded bg-thu-purple px-4 py-2 text-sm text-white hover:bg-thu-purple-dark"
+          className="rounded-xl bg-gradient-to-r from-thu-purple to-thu-purple-dark px-6 py-2.5 text-sm font-medium text-white hover:shadow-md transition-all active-press"
         >
-          检索
+          检索师资
         </button>
       </form>
 
+      {/* 学院横向平滑筛选栏 */}
       {colleges.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
           <Link
             href={qRaw ? `/faculty?q=${encodeURIComponent(qRaw)}` : "/faculty"}
             className={
               !college
-                ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-                : "px-3 py-1.5 text-sm rounded border border-zinc-200 hover:border-thu-purple hover:text-thu-purple"
+                ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+                : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
             }
           >
-            全部学院
+            全部院系
           </Link>
           {colleges.map((c) => {
             const params = new URLSearchParams();
@@ -77,8 +81,8 @@ export default async function FacultyPage({ searchParams }: Props) {
                 href={`/faculty?${params.toString()}`}
                 className={
                   college === c
-                    ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-                    : "px-3 py-1.5 text-sm rounded border border-zinc-200 hover:border-thu-purple hover:text-thu-purple"
+                    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
+                    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors"
                 }
               >
                 {c}
@@ -89,37 +93,51 @@ export default async function FacultyPage({ searchParams }: Props) {
       )}
 
       {filtered.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filtered.map((f) => (
             <article
               key={f.id}
               id={`faculty-${f.id}`}
-              className="p-4 border border-zinc-200 rounded-lg scroll-mt-24"
+              className="bg-white p-5 border border-zinc-150/80 rounded-xl shadow-2xs hover:shadow-md hover:border-thu-purple/30 transition-all duration-200 scroll-mt-24 flex flex-col justify-between"
             >
-              <div className="flex gap-4">
-                {f.avatarUrl && (
-                  <div className="flex-shrink-0 w-16 h-16">
-                    <img
-                      src={f.avatarUrl}
-                      alt={f.name}
-                      className="w-full h-full object-cover rounded-full"
-                    />
+              <div>
+                <div className="flex gap-4">
+                  {f.avatarUrl ? (
+                    <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden ring-2 ring-thu-purple/20 bg-zinc-100">
+                      <img
+                        src={f.avatarUrl}
+                        alt={f.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex-shrink-0 w-16 h-16 rounded-full bg-thu-purple-light text-thu-purple-dark flex items-center justify-center font-bold text-xl font-serif-title ring-2 ring-thu-purple/10">
+                      {f.name.slice(0, 1)}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <h2 className="font-bold text-base sm:text-lg text-zinc-900 font-serif-title">{f.name}</h2>
+                    <p className="text-xs sm:text-sm text-thu-purple-dark font-medium mt-0.5">{f.title}</p>
+                    <p className="text-xs text-zinc-500 mt-0.5 truncate">{f.college}</p>
+                  </div>
+                </div>
+
+                {f.researchFields && (
+                  <div className="mt-3 text-xs text-zinc-600 bg-thu-purple-50/80 border border-thu-purple/10 rounded-lg p-2.5">
+                    <span className="font-medium text-thu-purple-dark">研究方向：</span>
+                    {f.researchFields}
                   </div>
                 )}
-                <div>
-                  <h2 className="font-semibold">{f.name}</h2>
-                  <p className="text-sm text-zinc-600">{f.title}</p>
-                  <p className="text-sm text-zinc-500">{f.college}</p>
-                  {f.researchFields && (
-                    <p className="mt-1 text-xs text-zinc-400">研究方向：{f.researchFields}</p>
-                  )}
-                </div>
               </div>
+
               {f.profileHtml && (
-                <details className="mt-3">
-                  <summary className="cursor-pointer text-sm text-thu-purple">查看简介</summary>
+                <details className="mt-4 pt-3 border-t border-zinc-100 group">
+                  <summary className="cursor-pointer text-xs sm:text-sm font-medium text-thu-purple hover:text-thu-purple-dark flex items-center justify-between">
+                    <span>个人详情与履历</span>
+                    <span className="text-xs text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
                   <div
-                    className="mt-2 prose prose-zinc prose-sm max-w-none"
+                    className="mt-3 prose prose-zinc prose-sm max-w-none text-xs sm:text-sm text-zinc-600 bg-zinc-50/70 p-3 rounded-lg border border-zinc-100"
                     dangerouslySetInnerHTML={{ __html: f.profileHtml }}
                   />
                 </details>
@@ -128,7 +146,9 @@ export default async function FacultyPage({ searchParams }: Props) {
           ))}
         </div>
       ) : (
-        <p className="text-zinc-400">暂无匹配的师资信息</p>
+        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
+          暂无匹配的师资信息
+        </div>
       )}
     </div>
   );

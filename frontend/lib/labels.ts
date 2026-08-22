@@ -75,3 +75,29 @@ export function formatDate(iso: string): string {
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleDateString("zh-CN");
 }
+
+/** 新闻分类对应的色彩徽章类名 */
+export function articleCategoryBadgeClass(category?: string): string {
+  switch (category) {
+    case "academic":
+      return "bg-thu-blue-light text-thu-blue-dark border-thu-blue/20";
+    case "media":
+      return "bg-thu-gold-light text-thu-gold-dark border-thu-gold/30";
+    case "campus":
+      return "bg-thu-purple-light text-thu-purple-dark border-thu-purple/20";
+    default:
+      return "bg-zinc-100 text-zinc-700 border-zinc-200";
+  }
+}
+
+/** 通知级别对应的色彩徽章类名 */
+export function noticeLevelBadgeClass(level?: string): string {
+  switch (level) {
+    case "school":
+      return "bg-thu-red-light text-thu-red-dark border-thu-red/20";
+    case "dept":
+      return "bg-thu-purple-light text-thu-purple-dark border-thu-purple/20";
+    default:
+      return "bg-zinc-100 text-zinc-700 border-zinc-200";
+  }
+}

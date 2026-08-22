@@ -24,46 +24,50 @@ export const metadata: Metadata = {
  * 信息公开页面组件
  */
 export default async function OpennessPage() {
-  // 获取 CMS 中的信息公开页面内容
   const page = await getPageBySlug("openness").catch(() => null);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
       <Breadcrumb items={[{ label: "学校概况", href: "/about" }, { label: "信息公开" }]} />
-      <h1 className="text-2xl font-bold mb-6 font-serif-title">信息公开</h1>
-      
-      {page ? (
-        <>
-          {/* 富文本正文 */}
-          <div
-            className="prose prose-zinc max-w-none"
-            dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
-          />
-          
-          {/* 公开文件下载区域（可选） */}
-          {page.attachments.length > 0 && (
-            <section className="mt-8 border-t border-zinc-200 pt-6">
-              <h2 className="text-lg font-semibold mb-3">公开文件</h2>
-              <ul className="space-y-2">
-                {page.attachments.map((att, i) => (
-                  <li key={i}>
-                    <a
-                      href={att.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-700 hover:underline text-sm"
-                    >
-                      {att.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </>
-      ) : (
-        <p className="text-zinc-400">暂无内容</p>
-      )}
+      <div className="bg-white border border-zinc-150/80 rounded-xl p-5 sm:p-8 shadow-2xs">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900 border-b border-zinc-100 pb-4">
+          信息公开
+        </h1>
+        
+        {page ? (
+          <>
+            <div
+              className="prose prose-zinc max-w-none article-body"
+              dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
+            />
+            
+            {page.attachments.length > 0 && (
+              <section className="mt-8 border-t border-zinc-100 pt-6">
+                <h2 className="text-base sm:text-lg font-bold mb-3 font-serif-title text-zinc-900">公开文件下载</h2>
+                <ul className="space-y-2">
+                  {page.attachments.map((att, i) => (
+                    <li key={i}>
+                      <a
+                        href={att.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-thu-purple hover:underline text-sm inline-flex items-center gap-1.5"
+                      >
+                        <svg className="w-4 h-4 text-thu-purple/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {att.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </>
+        ) : (
+          <p className="text-zinc-400 py-8 text-center">暂无内容</p>
+        )}
+      </div>
     </div>
   );
 }
