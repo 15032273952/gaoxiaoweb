@@ -7,6 +7,7 @@
 - `cms/` — Strapi 5（Node ≥18 ≤22）。内容类型：article、banner、department、faculty-profile、notice、page、site-setting（单类型），组件 `shared.footer-link`。
 - `frontend/` — Next.js 16.2.10 + React 19，App Router，Tailwind CSS v4（CSS-first 配置在 `app/globals.css`，无 tailwind.config 文件）。
 - `deploy/` — 部署文档（`SERVER_DEPLOYMENT.md`、`LAN_DEPLOYMENT_RECORD.md`）与 SSH 辅助脚本。
+- `LOCAL_DEV.md` — 本地开发调试指南（前后端启动方式、架构总览），新环境先读。
 - `.workbuddy/memory/` — 工作记录，含部署踩坑，改部署相关代码前先读。
 
 ## 常用命令
