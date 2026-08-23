@@ -4,6 +4,8 @@
  */
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export const securityHeaders = [
   {
     key: "Strict-Transport-Security",
@@ -32,7 +34,10 @@ export const securityHeaders = [
       "img-src 'self' data: https:",
       "media-src 'self' https:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self'",
+      // Next.js App Router 通过 HTML 内联脚本（self.__next_f.push）向浏览器传递 RSC 数据；
+      // 若禁止内联脚本，React 永远无法水合，所有客户端交互（移动端抽屉导航、返回顶部等）静默失效。
+      // dev 模式另需 'unsafe-eval'（React 开发版用 eval 重建服务端错误栈）。
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
       "font-src 'self' data:",
       "frame-ancestors 'none'",
       "base-uri 'self'",
