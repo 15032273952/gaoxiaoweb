@@ -2,7 +2,7 @@
  * 通知详情页：面包屑、时效提示、返回列表
  */
 
-import { getNoticeBySlug, getNotices } from "@/lib/cms";
+import { getNoticeBySlug, getNotices } from "@/lib/content";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ArticleToolbar } from "@/components/ArticleToolbar";
 import { PrevNextNav } from "@/components/PrevNextNav";

@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site";
 
+// 静态导出：构建期生成静态 robots.txt
+export const dynamic = "force-static";
+
 export default function robots(): MetadataRoute.Robots {
   const base = getSiteUrl();
   return {

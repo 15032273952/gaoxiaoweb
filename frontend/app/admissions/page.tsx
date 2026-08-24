@@ -1,4 +1,4 @@
-import { getPageBySlug } from "@/lib/cms";
+import { getPageBySlug } from "@/lib/content";
 import { CmsPageView } from "@/components/CmsPageView";
 import type { Metadata } from "next";
 

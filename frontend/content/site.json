@@ -1,0 +1,14 @@
+{
+  "siteName": "高校官网演示站",
+  "icpRecordNo": "京ICP备00000000号",
+  "policeRecordNo": "京公网安备00000000000000号",
+  "address": "某省某市大学路1号",
+  "postcode": "100000",
+  "generalPhone": "010-00000000",
+  "generalEmail": "webmaster@example.edu.cn",
+  "footerLinks": [
+    { "label": "关于本站", "href": "/about" },
+    { "label": "联系我们", "href": "/contact" },
+    { "label": "网站地图", "href": "/site-map" }
+  ]
+}

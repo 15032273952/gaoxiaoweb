@@ -3,9 +3,12 @@
  */
 
 import type { MetadataRoute } from "next";
-import { getArticles, getNotices } from "@/lib/cms";
+import { getArticles, getNotices } from "@/lib/content";
 import { navItems } from "@/lib/nav";
 import { getSiteUrl } from "@/lib/site";
+
+// 静态导出：构建期生成静态 sitemap.xml
+export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();

@@ -10,7 +10,7 @@
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { NewsCard } from "@/components/NewsCard";
 import { NoticeList } from "@/components/NoticeList";
-import { getBanners, getArticles, getNotices } from "@/lib/cms";
+import { getBanners, getArticles, getNotices } from "@/lib/content";
 import { articleCategoryLabel, formatDate } from "@/lib/labels";
 import Link from "next/link";
 import type { Metadata } from "next";

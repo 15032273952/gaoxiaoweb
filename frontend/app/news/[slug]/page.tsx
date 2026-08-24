@@ -2,7 +2,7 @@
  * 新闻详情页：分类、作者、面包屑、相关阅读
  */
 
-import { getArticleBySlug, getArticles } from "@/lib/cms";
+import { getArticleBySlug, getArticles } from "@/lib/content";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ArticleToolbar } from "@/components/ArticleToolbar";
 import { PrevNextNav } from "@/components/PrevNextNav";

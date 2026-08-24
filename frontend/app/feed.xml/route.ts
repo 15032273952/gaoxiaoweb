@@ -2,8 +2,11 @@
  * 校园新闻 RSS 2.0：/feed.xml
  */
 
-import { getArticles, getSiteSetting } from "@/lib/cms";
+import { getArticles, getSiteSetting } from "@/lib/content";
 import { getSiteUrl } from "@/lib/site";
+
+// 静态导出：构建期生成静态 feed.xml
+export const dynamic = "force-static";
 
 function escapeXml(value: string): string {
   return value

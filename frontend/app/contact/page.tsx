@@ -2,7 +2,7 @@
  * 联系我们：联系方式 + 邮件咨询表单
  */
 
-import { getSiteSetting } from "@/lib/cms";
+import { getSiteSetting } from "@/lib/content";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { SearchForm } from "@/components/SearchForm";
 import type { Metadata } from "next";

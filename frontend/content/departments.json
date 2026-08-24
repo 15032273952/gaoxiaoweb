@@ -1,0 +1,101 @@
+[
+  {
+    "id": "d1",
+    "name": "党委办公室、校长办公室",
+    "slug": "party-admin-office",
+    "intro": "学校党委和行政的综合办事机构，负责综合协调、文秘、督查督办等工作。",
+    "responsibilities": "综合协调、公文管理、会议组织、督查督办、信息公开、信访接待。",
+    "contactOffice": "行政楼2楼",
+    "contactPhone": "010-00000001",
+    "contactEmail": "bgs@example.edu.cn",
+    "sort": 1
+  },
+  {
+    "id": "d2",
+    "name": "教务处",
+    "slug": "academic-affairs",
+    "intro": "负责本科教学运行、专业建设、课程建设与教学质量管理的职能部门。",
+    "responsibilities": "教学计划、课程安排、考试管理、学籍管理、专业与课程建设、教学评估。",
+    "contactOffice": "行政楼3楼",
+    "contactPhone": "010-00000002",
+    "contactEmail": "jwc@example.edu.cn",
+    "sort": 2
+  },
+  {
+    "id": "d3",
+    "name": "科研处",
+    "slug": "research-affairs",
+    "intro": "负责科学研究、学科建设、科研成果转化管理的职能部门。",
+    "responsibilities": "科研项目申报与管理、科研平台建设、成果转化、学术交流、学科建设。",
+    "contactOffice": "行政楼4楼",
+    "contactPhone": "010-00000003",
+    "contactEmail": "kyc@example.edu.cn",
+    "sort": 3
+  },
+  {
+    "id": "d4",
+    "name": "人事处",
+    "slug": "human-resources",
+    "intro": "负责师资队伍建设、人事管理与人才引进服务的职能部门。",
+    "responsibilities": "人事管理、师资建设、职称评审、薪酬福利、人才引进。",
+    "contactOffice": "行政楼5楼",
+    "contactPhone": "010-00000004",
+    "contactEmail": "rsc@example.edu.cn",
+    "sort": 4
+  },
+  {
+    "id": "d5",
+    "name": "学生工作处",
+    "slug": "student-affairs",
+    "intro": "负责学生教育管理、资助服务、心理健康教育与就业指导的职能部门。",
+    "responsibilities": "学生管理、奖助资助、心理健康教育、军训、就业指导。",
+    "contactOffice": "学生活动中心1楼",
+    "contactPhone": "010-00000005",
+    "contactEmail": "xsc@example.edu.cn",
+    "sort": 5
+  },
+  {
+    "id": "d6",
+    "name": "招生办公室",
+    "slug": "admissions-office",
+    "intro": "负责本专科招生计划编制、招生宣传、录取工作的职能部门。",
+    "responsibilities": "招生计划、招生宣传、录取组织、新生资格复查。",
+    "contactOffice": "行政楼1楼",
+    "contactPhone": "010-00000006",
+    "contactEmail": "zsb@example.edu.cn",
+    "sort": 6
+  },
+  {
+    "id": "d7",
+    "name": "计算机学院",
+    "slug": "cs-college",
+    "intro": "以计算机科学与技术为主干学科的教学科研单位，设有人工智能、数据科学等研究方向。",
+    "responsibilities": "计算机类人才培养、学科建设、科学研究、社会服务。",
+    "contactOffice": "信息楼",
+    "contactPhone": "010-00000007",
+    "contactEmail": "cs@example.edu.cn",
+    "sort": 10
+  },
+  {
+    "id": "d8",
+    "name": "文学院",
+    "slug": "literature-college",
+    "intro": "以中国语言文学为主干学科的教学科研单位，注重人文素养与写作能力培养。",
+    "responsibilities": "中文类人才培养、人文社科研究、校园文化建设。",
+    "contactOffice": "文科楼",
+    "contactPhone": "010-00000008",
+    "contactEmail": "wen@example.edu.cn",
+    "sort": 11
+  },
+  {
+    "id": "d9",
+    "name": "理学院",
+    "slug": "science-college",
+    "intro": "涵盖数学、物理等基础学科的教学科研单位，承担全校公共基础课教学。",
+    "responsibilities": "基础学科人才培养、公共数学物理教学、基础科学研究。",
+    "contactOffice": "理学楼",
+    "contactPhone": "010-00000009",
+    "contactEmail": "sci@example.edu.cn",
+    "sort": 12
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "b1",
+    "title": "厚德博学 追求卓越",
+    "imageUrl": "",
+    "linkUrl": "/about",
+    "openInNewTab": false
+  },
+  {
+    "id": "b2",
+    "title": "2026年秋季学期开学",
+    "imageUrl": "",
+    "linkUrl": "/notices",
+    "openInNewTab": false
+  },
+  {
+    "id": "b3",
+    "title": "科研创新 服务社会",
+    "imageUrl": "",
+    "linkUrl": "/research",
+    "openInNewTab": false
+  }
+]

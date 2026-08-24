@@ -1,12 +1,15 @@
 import type { NextConfig } from "next";
-import { withSecurityHeaders } from "./lib/security-headers";
 
+/**
+ * 最简版：纯静态导出（out/），由 Nginx 直接托管。
+ * 安全响应头随静态导出移至 Nginx（见 deploy/nginx-static.conf），
+ * 应用层不再注入（output: "export" 与自定义 headers() 不兼容）。
+ */
 const nextConfig: NextConfig = {
-  // SSG 静态导出（output: export 与自定义 headers 不兼容，已禁用）
-  // output: "export",
+  output: "export",
   images: {
-    unoptimized: true, // 静态导出模式关闭时也保留，便于 POC
+    unoptimized: true, // 静态导出无 Server 端图片优化服务
   },
 };
 
-export default withSecurityHeaders(nextConfig);
+export default nextConfig;
