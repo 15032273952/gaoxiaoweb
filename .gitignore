@@ -58,3 +58,8 @@ deploy/.env.local
 # Deploy scripts (contain server credentials)
 deploy/ssh_sftp_put.py
 deploy/ssh_exec.py
+ssh_connect_test.py
+
+# Python cache
+__pycache__/
+*.pyc

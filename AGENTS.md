@@ -54,6 +54,6 @@ cd frontend && npx tsc --noEmit  # typecheck
 ## 安全注意
 
 - 不要把任何服务器凭据、CMS Token、数据库密码写进代码或提交到 Git。
-- **当前隐患（待处理）**：`deploy/ssh_exec.py` 与根目录 `ssh_connect_test.py` 都含硬编码服务器 root 密码，且**仍被 git 跟踪**（`.gitignore` 只挡未跟踪文件，不会自动取消跟踪）。这两个文件需要 `git rm --cached` 移出跟踪、并清理 git 历史（如 `git filter-repo`），否则密码已泄露到仓库历史。
-- `deploy/ssh_sftp_put.py` 已被 `.gitignore` 忽略且未跟踪，属正确状态，不要提交。
-- 远程操作可参考 `.workbuddy/memory/2026-08-20.md` 中的服务器结构说明，但优先改用密钥登录/密钥库而非硬编码密码。
+- **历史遗留（2026-08-24 处理）**：`deploy/ssh_exec.py` 与根目录 `ssh_connect_test.py` 的**旧版本**曾硬编码服务器 root 密码，密码进入了 git 历史并推送至公开 GitHub 仓库。现已：脚本改为从根目录 `.env` 读凭据、两文件移出 git 跟踪、文档中明文凭据全部清除、服务器 root 密码已轮换（旧密码实测失效）。后续动作：`git filter-repo` 清理历史并 force push、评估仓库转 Private（见 `deploy/harden_server.py` 配套说明）。
+- `deploy/ssh_sftp_put.py`、`deploy/ssh_exec.py`、`ssh_connect_test.py` 均被 `.gitignore` 忽略且未跟踪，属正确状态，不要提交。
+- 远程操作统一用 `deploy/ssh_exec.py`（自动读根目录 `.env` 的 `SSH_HOST/SSH_PORT/SSH_USER/SSH_KEY/SSH_PASSWORD`，密钥优先）；服务器一键加固用 `deploy/harden_server.py`（同 `.env` 凭据）。

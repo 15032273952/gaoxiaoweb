@@ -21,7 +21,7 @@
 | 安全头 | 已生效（HSTS/CSP/XFO/nosniff 等，由 Next 应用层注入） |
 | 数据库 | SQLite（POC 单机）：`/home/zcm/campus-site/cms/database/data.db` |
 | 样例内容 | 已初始化（站点设置/新闻/通知/机构/师资/单页等） |
-| 管理员 | `admin@example.com` / `***REDACTED-LAN-ADMIN-PW***`（**上线后务必修改**） |
+| 管理员 | `admin@example.com` / 初始密码已从文档移除（**上线后务必修改**） |
 
 从本机验证：
 
@@ -222,7 +222,7 @@ nginx -t && systemctl restart nginx
 ```bash
 curl -X POST http://127.0.0.1:1337/admin/register-admin \
   -H 'Content-Type: application/json' \
-  -d '{"email":"admin@example.com","password":"***REDACTED-LAN-ADMIN-PW***","firstname":"Campus","lastname":"Admin"}'
+  -d '{"email":"admin@example.com","password":"<强密码，勿写入文档>","firstname":"Campus","lastname":"Admin"}'
 ```
 
 2. 创建只读 API Token：`frontend-readonly-*`，写入  
@@ -280,7 +280,7 @@ ssh -L 1337:127.0.0.1:1337 zcm@192.168.2.5
 管理员（POC 初始，**请立即修改**）：
 
 - 邮箱：`admin@example.com`
-- 密码：`***REDACTED-LAN-ADMIN-PW***`
+- 密码：初始密码已从文档移除（2026-08-24 清理；真实凭据不入仓库）
 
 ---
 
