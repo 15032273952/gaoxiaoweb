@@ -57,8 +57,9 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
 
   if (banners.length === 0) {
     return (
-      <div className="w-full h-56 sm:h-72 md:h-[28rem] bg-gradient-to-br from-thu-purple via-[#52075f] to-thu-purple-dark flex items-center justify-center text-white/70 font-serif-title text-lg md:text-xl">
-        暂无轮播内容
+      <div className="relative w-full h-56 sm:h-72 md:h-[28rem] flex items-center justify-center text-white/70 font-serif-title text-lg md:text-xl overflow-hidden">
+        <div aria-hidden className="absolute inset-0 thu-flow-gradient" />
+        <span className="relative">暂无轮播内容</span>
       </div>
     );
   }
@@ -89,9 +90,10 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-thu-purple via-[#52075f] to-thu-purple-dark flex items-center justify-center text-white/80 font-serif-title text-xl md:text-3xl px-8 text-center">
-                {banner.title}
-              </div>
+              <div
+                aria-hidden
+                className="absolute inset-0 thu-flow-gradient"
+              />
             )}
 
             {banner.title && (

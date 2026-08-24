@@ -210,3 +210,140 @@ html {
     color: inherit !important;
   }
 }
+
+/* ============================================================
+   动效系统（纯 CSS，静态导出兼容）
+   - .reveal 滚动入场（配合 components/Reveal.tsx 的 IntersectionObserver）
+   - 装饰性 keyframes：漂浮光斑 / 渐变流动 / 数字弹入 / 通知轮播
+   - prefers-reduced-motion 时全部自动降级为无动画
+   ============================================================ */
+
+@keyframes thu-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes thu-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(18px, -22px) scale(1.06); }
+  66%      { transform: translate(-14px, 12px) scale(0.96); }
+}
+
+/* 渐变背景横向流动（背景尺寸 200% 往复平移） */
+@keyframes thu-gradient-pan {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 统计数字弹入 */
+@keyframes thu-pop-in {
+  0%   { opacity: 0; transform: scale(0.6); }
+  70%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* 通知竖向轮播：由 NoticeTicker 以内联 --ticker-items 控制步进 */
+@keyframes thu-ticker {
+  0%, 22%    { transform: translateY(0); }
+  25%, 47%   { transform: translateY(calc(-1 * var(--th, 2rem))); }
+  50%, 72%   { transform: translateY(calc(-2 * var(--th, 2rem))); }
+  75%, 97%   { transform: translateY(calc(-3 * var(--th, 2rem))); }
+  100%       { transform: translateY(calc(-4 * var(--th, 2rem))); }
+}
+
+/**
+ * 滚动入场基类：
+ * JS 未就绪/未触发前隐藏并下移；.is-visible 后以弹性缓动浮入。
+ * delay 通过内联 transition-delay 实现级联错落感。
+ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/** 无障碍：偏好减少动效时关闭所有装饰动画与过渡位移 */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/** 首页主视觉下的流动渐变横幅（紫→蓝→金缓慢往复） */
+.thu-flow-gradient {
+  background-image: linear-gradient(
+    120deg,
+    var(--thu-purple-dark),
+    var(--thu-purple) 30%,
+    var(--thu-blue) 55%,
+    var(--thu-purple) 75%,
+    var(--thu-gold-dark)
+  );
+  background-size: 220% 220%;
+  animation: thu-gradient-pan 14s ease-in-out infinite;
+}
+
+/** 卡片悬浮提升（配合既有 shadow 工具类使用） */
+.card-lift {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+}
+
+/** 快捷入口图标 hover 弹跳 */
+@keyframes thu-bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-7px); }
+  65%      { transform: translateY(-3px); }
+}
+.group:hover .icon-bounce {
+  animation: thu-bounce-soft 0.6s ease;
+}
+
+/** 区块标题金色下划线生长动效 */
+.section-title {
+  position: relative;
+}
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  width: 3.5rem;
+  background: linear-gradient(to right, var(--thu-gold), var(--thu-gold-light));
+  border-radius: 2px;
+  animation: thu-title-line 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes thu-title-line {
+  from { width: 0; }
+  to   { width: 3.5rem; }
+}

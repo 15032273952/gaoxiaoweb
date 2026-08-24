@@ -10,6 +10,9 @@
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { NewsCard } from "@/components/NewsCard";
 import { NoticeList } from "@/components/NoticeList";
+import { NoticeTicker } from "@/components/NoticeTicker";
+import { StatsBand } from "@/components/StatsBand";
+import { Reveal } from "@/components/Reveal";
 import { getBanners, getArticles, getNotices } from "@/lib/content";
 import { articleCategoryLabel, formatDate } from "@/lib/labels";
 import Link from "next/link";
@@ -122,11 +125,13 @@ export default async function HomePage() {
         <BannerCarousel banners={banners} />
       </section>
 
+      <NoticeTicker notices={notices} />
+
       {/* ===== 校园要闻 + 通知公告 ===== */}
       <section className="mx-auto max-w-6xl px-4 py-8 sm:py-10 md:py-14">
         <div className="grid gap-8 lg:gap-10 lg:grid-cols-3">
           {/* 左侧 2/3：校园要闻 */}
-          <div className="lg:col-span-2">
+          <Reveal className="lg:col-span-2">
             <div className="section-title">
               <span className="section-title-text">校园要闻</span>
               <Link
@@ -143,7 +148,7 @@ export default async function HomePage() {
                 {headline && (
                   <Link
                     href={`/news/${headline.slug}`}
-                    className="group block bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-lg hover:border-thu-purple/30 transition-all duration-300 active-press"
+                    className="group card-lift block bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-lg hover:border-thu-purple/30 active-press"
                   >
                     {headline.coverUrl && (
                       <div className="w-full h-48 sm:h-64 md:h-72 overflow-hidden bg-zinc-100">
@@ -185,11 +190,12 @@ export default async function HomePage() {
             ) : (
               <p className="text-zinc-400 text-sm py-4">暂无新闻</p>
             )}
-          </div>
+          </Reveal>
 
           {/* 右侧 1/3：通知公告卡片 */}
           <aside className="space-y-6">
-            <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-md transition-shadow">
+            <Reveal delay={120}>
+            <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs card-lift hover:shadow-md hover:border-thu-purple/25">
               {/* 卡片标题栏：深紫微渐变底色 */}
               <div className="bg-gradient-to-r from-thu-purple to-thu-purple-dark text-white px-4 sm:px-5 py-3.5 flex items-center justify-between border-b-2 border-thu-gold/80">
                 <div className="flex items-center gap-2">
@@ -207,9 +213,11 @@ export default async function HomePage() {
                 <NoticeList notices={latestNotices} />
               </div>
             </div>
+            </Reveal>
 
             {academic.length > 0 && (
-              <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-md transition-shadow">
+              <Reveal delay={220}>
+              <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs card-lift hover:shadow-md hover:border-thu-blue/25">
                 <div className="px-5 py-3 flex items-center justify-between border-b border-zinc-100">
                   <h2 className="font-bold font-serif-title text-thu-purple-dark">学术动态</h2>
                   <Link
@@ -232,40 +240,54 @@ export default async function HomePage() {
                   ))}
                 </ul>
               </div>
+              </Reveal>
             )}
           </aside>
         </div>
       </section>
 
+      {/* ===== 数说学校（滚动进入时数字计数动画） ===== */}
+      <StatsBand />
+
       {/* ===== 快捷入口（图标化多色卡片） ===== */}
-      <section className="w-full bg-gradient-to-b from-thu-surface-warm to-thu-purple-50/50 py-10 sm:py-12 md:py-16 border-t border-thu-purple/5">
-        <div className="mx-auto max-w-6xl px-4">
+      <section className="w-full bg-gradient-to-b from-thu-surface-warm to-thu-purple-50/50 py-10 sm:py-12 md:py-16 border-t border-thu-purple/5 relative overflow-hidden">
+        {/* 背景漂浮装饰光斑 */}
+        <div
+          aria-hidden
+          className="absolute top-6 right-[8%] w-40 h-40 rounded-full bg-thu-gold-light blur-3xl opacity-70 animate-[thu-float_13s_ease-in-out_infinite]"
+        />
+        <div
+          aria-hidden
+          className="absolute -bottom-10 left-[6%] w-48 h-48 rounded-full bg-thu-blue-light blur-3xl opacity-80 animate-[thu-float_16s_ease-in-out_infinite_reverse]"
+        />
+        <div className="relative mx-auto max-w-6xl px-4">
           <div className="section-title">
             <span className="section-title-text">快捷入口</span>
           </div>
           {/* 栅格布局：移动端 2 列，平板 3 列，桌面 6 列 */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
-            {quickLinks.map((link) => {
+            {quickLinks.map((link, i) => {
               const iconClasses = getIconColorClasses(link.color);
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="group bg-white rounded-xl border border-zinc-150/80 p-4 sm:p-5 text-center hover:border-thu-purple/40 hover:shadow-md transition-all duration-200 active-press flex flex-col items-center justify-center"
-                >
-                  {/* 双色微渐变图标 */}
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-all duration-300 shadow-2xs ${iconClasses}`}
+                <Reveal key={link.href} delay={i * 70}>
+                  <Link
+                    href={link.href}
+                    className="group card-lift bg-white rounded-xl border border-zinc-150/80 p-4 sm:p-5 text-center hover:border-thu-purple/40 hover:shadow-lg active-press flex flex-col items-center justify-center"
                   >
-                    {link.icon}
-                  </div>
-                  <div className="text-sm sm:text-base font-bold text-zinc-800 group-hover:text-thu-purple transition-colors font-serif-title">
-                    {link.label}
-                  </div>
-                  <div className="mt-1 text-[10px] text-zinc-400 tracking-wider uppercase font-medium">
-                    {link.desc}
-                  </div>
-                </Link>
+                    {/* 双色微渐变图标：hover 弹跳 */}
+                    <div
+                      className={`icon-bounce w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-colors duration-300 shadow-2xs ${iconClasses}`}
+                    >
+                      {link.icon}
+                    </div>
+                    <div className="text-sm sm:text-base font-bold text-zinc-800 group-hover:text-thu-purple transition-colors font-serif-title">
+                      {link.label}
+                    </div>
+                    <div className="mt-1 text-[10px] text-zinc-400 tracking-wider uppercase font-medium">
+                      {link.desc}
+                    </div>
+                  </Link>
+                </Reveal>
               );
             })}
           </div>
