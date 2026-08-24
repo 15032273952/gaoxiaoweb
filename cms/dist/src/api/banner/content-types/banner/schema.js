@@ -1,0 +1,46 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
+    "kind": "collectionType",
+    "collectionName": "banners",
+    "info": {
+        "singularName": "banner",
+        "pluralName": "banners",
+        "displayName": "轮播",
+        "description": "首页轮播图"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "linkUrl": {
+            "type": "string"
+        },
+        "sort": {
+            "type": "integer",
+            "default": 0
+        },
+        "isActive": {
+            "type": "boolean",
+            "default": true
+        },
+        "openInNewTab": {
+            "type": "boolean",
+            "default": false
+        }
+    }
+};
+//# sourceMappingURL=schema.js.map
