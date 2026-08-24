@@ -1,5 +1,4 @@
-import { getPageBySlug } from "@/lib/content";
-import { CmsPageView } from "@/components/CmsPageView";
+import { CmsPageShell } from "@/components/CmsPageShell";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,13 +6,6 @@ export const metadata: Metadata = {
   description: "高校科学研究介绍。",
 };
 
-export default async function ResearchPage() {
-  const page = await getPageBySlug("research").catch(() => null);
-  return (
-    <CmsPageView
-      title="科学研究"
-      crumbs={[{ label: "科学研究" }]}
-      page={page}
-    />
-  );
+export default function ResearchPage() {
+  return <CmsPageShell slug="research" title="科学研究" crumbs={[{ label: "科学研究" }]} />;
 }

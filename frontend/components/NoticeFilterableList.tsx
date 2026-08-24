@@ -6,11 +6,13 @@
  */
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { NoticeListItem } from "@/lib/types";
 import { NoticeList } from "@/components/NoticeList";
 import { Pagination } from "@/components/Pagination";
+import { ChipBar, FilterChip } from "@/components/ChipBar";
+import { EmptyState } from "@/components/EmptyState";
+import { useClientPaging } from "@/lib/useClientPaging";
 import { NOTICE_LEVELS, parseNoticeLevel, parsePage } from "@/lib/labels";
 
 const PAGE_SIZE = 20;
@@ -23,12 +25,6 @@ function noticesHref(level?: string, page?: number) {
   return qs ? `/notices?${qs}` : "/notices";
 }
 
-function chipClass(active: boolean) {
-  return active
-    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
-    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors";
-}
-
 export function NoticeFilterableList({ notices }: { notices: NoticeListItem[] }) {
   const searchParams = useSearchParams();
   const level = parseNoticeLevel(searchParams.get("level") ?? undefined);
@@ -39,23 +35,21 @@ export function NoticeFilterableList({ notices }: { notices: NoticeListItem[] })
     [notices, level],
   );
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const slice = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const { totalPages, safePage, slice } = useClientPaging(filtered, page, PAGE_SIZE);
 
   return (
     <>
       {/* 级别筛选：全部 / 校级 / 部门，支持移动端横向滑动 */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-        <Link href="/notices" className={chipClass(!level)}>
+      <ChipBar>
+        <FilterChip href="/notices" active={!level}>
           全部级别
-        </Link>
+        </FilterChip>
         {NOTICE_LEVELS.map((l) => (
-          <Link key={l.value} href={noticesHref(l.value)} className={chipClass(level === l.value)}>
+          <FilterChip key={l.value} href={noticesHref(l.value)} active={level === l.value}>
             {l.label}
-          </Link>
+          </FilterChip>
         ))}
-      </div>
+      </ChipBar>
 
       {filtered.length > 0 ? (
         <div className="bg-white border border-zinc-150/80 rounded-xl p-4 sm:p-6 shadow-2xs">
@@ -70,9 +64,7 @@ export function NoticeFilterableList({ notices }: { notices: NoticeListItem[] })
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
-          暂无匹配的通知公告
-        </div>
+        <EmptyState>暂无匹配的通知公告</EmptyState>
       )}
     </>
   );

@@ -1,5 +1,4 @@
-import { getPageBySlug } from "@/lib/content";
-import { CmsPageView } from "@/components/CmsPageView";
+import { CmsPageShell } from "@/components/CmsPageShell";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,13 +6,12 @@ export const metadata: Metadata = {
   description: "高校信息公开。",
 };
 
-export default async function OpennessPage() {
-  const page = await getPageBySlug("openness").catch(() => null);
+export default function OpennessPage() {
   return (
-    <CmsPageView
+    <CmsPageShell
+      slug="openness"
       title="信息公开"
       crumbs={[{ label: "学校概况", href: "/about" }, { label: "信息公开" }]}
-      page={page}
       attachmentTitle="公开文件"
     />
   );

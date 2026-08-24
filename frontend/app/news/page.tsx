@@ -2,10 +2,9 @@
  * 新闻列表页（静态壳）：分类、年份、分页筛选在客户端进行。
  */
 
-import { Suspense } from "react";
 import { getArticles } from "@/lib/content";
 import { NewsFilterableList } from "@/components/NewsFilterableList";
-import { Breadcrumb } from "@/components/Breadcrumb";
+import { ListPageShell } from "@/components/ListPageShell";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,14 +14,13 @@ export const metadata: Metadata = {
 
 export default async function NewsPage() {
   const articles = await getArticles().catch(() => []);
-
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <Breadcrumb items={[{ label: "新闻公告", href: "/news" }, { label: "校园新闻" }]} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900">校园新闻</h1>
-      <Suspense fallback={<p className="text-sm text-zinc-400">正在加载新闻列表…</p>}>
-        <NewsFilterableList articles={articles} />
-      </Suspense>
-    </div>
+    <ListPageShell
+      title="校园新闻"
+      crumbs={[{ label: "新闻公告", href: "/news" }, { label: "校园新闻" }]}
+      fallback="正在加载新闻列表…"
+    >
+      <NewsFilterableList articles={articles} />
+    </ListPageShell>
   );
 }

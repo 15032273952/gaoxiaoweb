@@ -1,7 +1,7 @@
 /**
  * 前台展示文案映射
  *
- * CMS 枚举存的是英文值，页面展示用中文标签。
+ * 数据文件（content/*.json）中枚举存的是英文值，页面展示用中文标签。
  */
 
 export const ARTICLE_CATEGORIES = [

@@ -34,12 +34,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let setting = null;
-  try {
-    setting = await getSiteSetting();
-  } catch {
-    // CMS 不可用时降级
-  }
+  const setting = await getSiteSetting().catch(() => null);
   const siteName = setting?.siteName ?? "高校官网";
   const jsonLd = {
     "@context": "https://schema.org",

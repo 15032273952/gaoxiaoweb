@@ -2,10 +2,9 @@
  * 内容数据适配层 - lib/content.ts
  *
  * 最简版数据源：直接读取仓库 content/ 目录下的 JSON 文件（ViewModel 结构）。
- * 与原 lib/cms.ts 保持完全相同的导出签名，页面组件零改动。
  *
  * 内容维护方式：编辑 content/*.json → git 提交 → 重新构建发布。
- * 排序语义与原 CMS 查询一致：
+ * 排序语义：
  * - 文章：置顶优先，其次发布时间倒序
  * - 通知：置顶优先，其次发布时间倒序
  * - 轮播/部门：sort 字段升序
@@ -49,10 +48,9 @@ function byPinnedThenDate<T extends { publishedAt: string; isPinned?: boolean; i
   return b.publishedAt.localeCompare(a.publishedAt);
 }
 
-function toListItem(d: ArticleDetail): ArticleListItem {
-  const { contentHtml, attachments, authors, seoTitle, seoDescription, ...list } = d;
-  void contentHtml; void attachments; void authors; void seoTitle; void seoDescription;
-  return list;
+function toListItem(a: ArticleDetail): ArticleListItem {
+  const { id, title, slug, summary, publishedAt, category, coverUrl, isPinned } = a;
+  return { id, title, slug, summary, publishedAt, category, coverUrl, isPinned };
 }
 
 export async function getArticles(): Promise<ArticleListItem[]> {
@@ -65,9 +63,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
 
 export async function getNotices(): Promise<NoticeListItem[]> {
   return notices.slice().sort(byPinnedThenDate).map((n) => {
-    const { summary, contentHtml, attachments, effectiveDate, expireDate, seoTitle, seoDescription, ...list } = n;
-    void summary; void contentHtml; void attachments; void effectiveDate; void expireDate; void seoTitle; void seoDescription;
-    return list;
+    const { id, title, slug, publishedAt, isTop, noticeNo, level } = n;
+    return { id, title, slug, publishedAt, isTop, noticeNo, level };
   });
 }
 

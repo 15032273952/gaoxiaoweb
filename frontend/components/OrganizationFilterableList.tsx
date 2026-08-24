@@ -8,6 +8,8 @@
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import type { DepartmentItem } from "@/lib/types";
+import { EmptyState } from "@/components/EmptyState";
+import { SearchBox } from "@/components/SearchBox";
 
 export function OrganizationFilterableList({ departments }: { departments: DepartmentItem[] }) {
   const searchParams = useSearchParams();
@@ -29,21 +31,12 @@ export function OrganizationFilterableList({ departments }: { departments: Depar
 
   return (
     <>
-      <form action="/organization" method="get" className="flex flex-col sm:flex-row gap-2.5 mb-8 max-w-lg">
-        <input
-          name="q"
-          type="search"
-          defaultValue={qRaw}
-          placeholder="检索部门名称或职责..."
-          className="flex-1 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-thu-purple focus:ring-2 focus:ring-thu-purple/20 transition-all shadow-2xs"
-        />
-        <button
-          type="submit"
-          className="rounded-xl bg-gradient-to-r from-thu-purple to-thu-purple-dark px-6 py-2.5 text-sm font-medium text-white hover:shadow-md transition-all active-press"
-        >
-          检索
-        </button>
-      </form>
+      <SearchBox
+        action="/organization"
+        placeholder="检索部门名称或职责..."
+        className="max-w-lg"
+        defaultValue={qRaw}
+      />
 
       {filtered.length > 0 ? (
         q ? (
@@ -56,9 +49,7 @@ export function OrganizationFilterableList({ departments }: { departments: Depar
           <DepartmentTree items={filtered} />
         )
       ) : (
-        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
-          暂无匹配部门
-        </div>
+        <EmptyState>暂无匹配部门</EmptyState>
       )}
     </>
   );

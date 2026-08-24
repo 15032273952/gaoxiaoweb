@@ -6,15 +6,11 @@
  */
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { FacultyProfile } from "@/lib/types";
-
-function chipClass(active: boolean) {
-  return active
-    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
-    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors";
-}
+import { ChipBar, FilterChip } from "@/components/ChipBar";
+import { EmptyState } from "@/components/EmptyState";
+import { SearchBox } from "@/components/SearchBox";
 
 export function FacultyFilterableList({ profiles }: { profiles: FacultyProfile[] }) {
   const searchParams = useSearchParams();
@@ -41,45 +37,32 @@ export function FacultyFilterableList({ profiles }: { profiles: FacultyProfile[]
   return (
     <>
       {/* 检索表单 */}
-      <form action="/faculty" method="get" className="flex flex-col sm:flex-row gap-2.5 mb-6">
+      <SearchBox
+        action="/faculty"
+        placeholder="按姓名、职称、研究方向检索学者"
+        buttonLabel="检索师资"
+        defaultValue={qRaw}
+      >
         {college && <input type="hidden" name="college" value={college} />}
-        <div className="relative flex-1">
-          <input
-            name="q"
-            type="search"
-            defaultValue={qRaw}
-            placeholder="按姓名、职称、研究方向检索学者"
-            className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-thu-purple focus:ring-2 focus:ring-thu-purple/20 transition-all shadow-2xs"
-          />
-        </div>
-        <button
-          type="submit"
-          className="rounded-xl bg-gradient-to-r from-thu-purple to-thu-purple-dark px-6 py-2.5 text-sm font-medium text-white hover:shadow-md transition-all active-press"
-        >
-          检索师资
-        </button>
-      </form>
+      </SearchBox>
 
       {/* 学院横向平滑筛选栏 */}
       {colleges.length > 0 && (
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-          <Link
-            href={qRaw ? `/faculty?q=${encodeURIComponent(qRaw)}` : "/faculty"}
-            className={chipClass(!college)}
-          >
+        <ChipBar>
+          <FilterChip href={qRaw ? `/faculty?q=${encodeURIComponent(qRaw)}` : "/faculty"} active={!college}>
             全部院系
-          </Link>
+          </FilterChip>
           {colleges.map((c) => {
             const params = new URLSearchParams();
             params.set("college", c);
             if (qRaw) params.set("q", qRaw);
             return (
-              <Link key={c} href={`/faculty?${params.toString()}`} className={chipClass(college === c)}>
+              <FilterChip key={c} href={`/faculty?${params.toString()}`} active={college === c}>
                 {c}
-              </Link>
+              </FilterChip>
             );
           })}
-        </div>
+        </ChipBar>
       )}
 
       {filtered.length > 0 ? (
@@ -139,9 +122,7 @@ export function FacultyFilterableList({ profiles }: { profiles: FacultyProfile[]
           </div>
         </>
       ) : (
-        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
-          暂无匹配的师资信息
-        </div>
+        <EmptyState>暂无匹配的师资信息</EmptyState>
       )}
     </>
   );

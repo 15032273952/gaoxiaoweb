@@ -6,11 +6,13 @@
  */
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { ArticleListItem } from "@/lib/types";
 import { NewsCard } from "@/components/NewsCard";
 import { Pagination } from "@/components/Pagination";
+import { ChipBar, FilterChip } from "@/components/ChipBar";
+import { EmptyState } from "@/components/EmptyState";
+import { useClientPaging } from "@/lib/useClientPaging";
 import {
   ARTICLE_CATEGORIES,
   parseArticleCategory,
@@ -27,12 +29,6 @@ function newsHref(category?: string, year?: number, page?: number) {
   if (page && page > 1) params.set("page", String(page));
   const qs = params.toString();
   return qs ? `/news?${qs}` : "/news";
-}
-
-function chipClass(active: boolean) {
-  return active
-    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
-    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors";
 }
 
 export function NewsFilterableList({ articles }: { articles: ArticleListItem[] }) {
@@ -61,39 +57,33 @@ export function NewsFilterableList({ articles }: { articles: ArticleListItem[] }
     [articles, category, year],
   );
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const slice = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const { totalPages, safePage, slice } = useClientPaging(filtered, page, PAGE_SIZE);
 
   return (
     <>
       {/* 移动端横向无阻滑动筛选栏 */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-        <Link href={newsHref(undefined, year)} className={chipClass(!category)}>
+      <ChipBar>
+        <FilterChip href={newsHref(undefined, year)} active={!category}>
           全部新闻
-        </Link>
+        </FilterChip>
         {ARTICLE_CATEGORIES.map((c) => (
-          <Link
-            key={c.value}
-            href={newsHref(c.value, year)}
-            className={chipClass(category === c.value)}
-          >
+          <FilterChip key={c.value} href={newsHref(c.value, year)} active={category === c.value}>
             {c.label}
-          </Link>
+          </FilterChip>
         ))}
-      </div>
+      </ChipBar>
 
       {years.length > 1 && (
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-          <Link href={newsHref(category)} className={chipClass(!year)}>
+        <ChipBar>
+          <FilterChip href={newsHref(category)} active={!year}>
             全部年份
-          </Link>
+          </FilterChip>
           {years.map((y) => (
-            <Link key={y} href={newsHref(category, y)} className={chipClass(year === y)}>
+            <FilterChip key={y} href={newsHref(category, y)} active={year === y}>
               {y}年
-            </Link>
+            </FilterChip>
           ))}
-        </div>
+        </ChipBar>
       )}
 
       {slice.length > 0 ? (
@@ -115,9 +105,7 @@ export function NewsFilterableList({ articles }: { articles: ArticleListItem[] }
           </div>
         </>
       ) : (
-        <div className="text-center py-12 bg-white rounded-xl border border-zinc-150 text-zinc-400 text-sm">
-          暂无符合条件的新闻
-        </div>
+        <EmptyState>暂无符合条件的新闻</EmptyState>
       )}
     </>
   );
