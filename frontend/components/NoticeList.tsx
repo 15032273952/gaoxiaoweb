@@ -11,6 +11,23 @@ import type { NoticeListItem } from "@/lib/types";
 import { noticeLevelLabel, noticeLevelBadgeClass } from "@/lib/labels";
 import Link from "next/link";
 
+/** 日期方块配色：校级通知朱砂红，部门通知清华紫 */
+function dateBadgeClasses(level?: string): string {
+  if (level === "school") {
+    return "bg-thu-red-light/80 border-thu-red/15 group-hover:bg-thu-red";
+  }
+  if (level === "dept") {
+    return "bg-thu-purple-light/80 border-thu-purple/10 group-hover:bg-thu-purple";
+  }
+  return "bg-thu-purple-light/80 border-thu-purple/10 group-hover:bg-thu-purple";
+}
+function dateTextClasses(level?: string): string {
+  if (level === "school") {
+    return "text-thu-red-dark group-hover:text-white";
+  }
+  return "text-thu-purple-dark group-hover:text-white";
+}
+
 export function NoticeList({
   notices,
   showLevel = false,
@@ -39,11 +56,13 @@ export function NoticeList({
           <li key={notice.id} className="py-3 first:pt-2 last:pb-2">
             <Link
               href={`/notices/${notice.slug}`}
-              className="group flex items-center gap-3 sm:gap-4 transition-colors active-press rounded-lg p-1.5 -mx-1.5 hover:bg-thu-purple-50"
+              className={`group flex items-center gap-3 sm:gap-4 transition-colors active-press rounded-lg p-1.5 -mx-1.5 ${
+                notice.level === "school" ? "hover:bg-thu-red-50" : "hover:bg-thu-purple-50"
+              }`}
             >
-              {/* 左侧紧凑日期方块 */}
-              <div className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 bg-thu-purple-light/80 border border-thu-purple/10 rounded-lg flex flex-col items-center justify-center text-center group-hover:bg-thu-purple group-hover:text-white transition-colors duration-200">
-                <span className="text-[13px] sm:text-sm font-bold font-mono leading-none group-hover:text-white text-thu-purple-dark">
+              {/* 左侧紧凑日期方块（按通知级别配色） */}
+              <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 border rounded-lg flex flex-col items-center justify-center text-center transition-colors duration-200 ${dateBadgeClasses(notice.level)}`}>
+                <span className={`text-[13px] sm:text-sm font-bold font-mono leading-none ${dateTextClasses(notice.level)}`}>
                   {month}-{day}
                 </span>
                 <span className="text-[10px] text-zinc-400 group-hover:text-white/80 leading-tight mt-0.5 font-mono">

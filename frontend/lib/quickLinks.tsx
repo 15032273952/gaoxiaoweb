@@ -103,7 +103,25 @@ export function getIconColorClasses(color: string): string {
       return "bg-thu-blue-light text-thu-blue group-hover:bg-thu-blue group-hover:text-white";
     case "gold":
       return "bg-thu-gold-light text-thu-gold-dark group-hover:bg-thu-gold group-hover:text-white";
+    case "red":
+      return "bg-thu-red-light text-thu-red group-hover:bg-thu-red group-hover:text-white";
     default:
       return "bg-thu-purple-light text-thu-purple group-hover:bg-thu-purple group-hover:text-white";
+  }
+}
+
+/** 根据 color 字段返回卡片顶部装饰条的配色修饰类（配合 .card-top-accent） */
+export function getIconAccentClass(color: string): string {
+  switch (color) {
+    case "green":
+      return "accent-green";
+    case "blue":
+      return "accent-blue";
+    case "gold":
+      return "accent-gold";
+    case "red":
+      return "accent-red";
+    default:
+      return "";
   }
 }

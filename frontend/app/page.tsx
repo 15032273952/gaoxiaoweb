@@ -15,7 +15,7 @@ import { StatsBand } from "@/components/StatsBand";
 import { Reveal } from "@/components/Reveal";
 import { getBanners, getArticles, getNotices } from "@/lib/content";
 import { articleCategoryLabel, formatDate } from "@/lib/labels";
-import { quickLinks, getIconColorClasses } from "@/lib/quickLinks";
+import { quickLinks, getIconColorClasses, getIconAccentClass } from "@/lib/quickLinks";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -65,7 +65,7 @@ export default async function HomePage() {
                 {headline && (
                   <Link
                     href={`/news/${headline.slug}`}
-                    className="group card-lift block bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-lg hover:border-thu-purple/30 active-press"
+                    className="group card-lift card-top-accent block bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-lg hover:border-thu-purple/30 active-press"
                   >
                     {headline.coverUrl && (
                       <div className="w-full h-48 sm:h-64 md:h-72 overflow-hidden bg-zinc-100">
@@ -134,12 +134,16 @@ export default async function HomePage() {
 
             {academic.length > 0 && (
               <Reveal delay={220}>
-              <div className="bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs card-lift hover:shadow-md hover:border-thu-blue/25">
-                <div className="px-5 py-3 flex items-center justify-between border-b border-zinc-100">
-                  <h2 className="font-bold font-serif-title text-thu-purple-dark">学术动态</h2>
+              <div className="card-top-accent accent-blue bg-white border border-zinc-150/80 rounded-xl overflow-hidden shadow-2xs card-lift hover:shadow-md hover:border-thu-blue/25">
+                {/* 卡片标题栏：青黛蓝渐变底色，与"学术"分类色呼应 */}
+                <div className="bg-gradient-to-r from-thu-blue to-thu-blue-dark text-white px-4 sm:px-5 py-3 flex items-center justify-between border-b-2 border-thu-gold/60">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-thu-gold" />
+                    <h2 className="font-bold font-serif-title text-base tracking-wide">学术动态</h2>
+                  </div>
                   <Link
                     href="/news?category=academic"
-                    className="text-xs text-zinc-400 hover:text-thu-purple"
+                    className="text-xs text-white/80 hover:text-thu-gold transition-colors font-medium"
                   >
                     更多 &gt;
                   </Link>
@@ -149,7 +153,7 @@ export default async function HomePage() {
                     <li key={a.id} className="py-2.5">
                       <Link
                         href={`/news/${a.slug}`}
-                        className="text-sm text-zinc-700 hover:text-thu-purple line-clamp-2"
+                        className="text-sm text-zinc-700 hover:text-thu-blue line-clamp-2 transition-colors"
                       >
                         {a.title}
                       </Link>
@@ -178,18 +182,19 @@ export default async function HomePage() {
           className="absolute -bottom-10 left-[6%] w-48 h-48 rounded-full bg-thu-blue-light blur-3xl opacity-80 animate-[thu-float_16s_ease-in-out_infinite_reverse]"
         />
         <div className="relative mx-auto max-w-6xl px-4">
-          <div className="section-title">
+          <div className="section-title section-gold">
             <span className="section-title-text">快捷入口</span>
           </div>
           {/* 栅格布局：移动端 2 列，平板 3 列，桌面 6 列 */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {quickLinks.map((link, i) => {
               const iconClasses = getIconColorClasses(link.color);
+              const accentClass = getIconAccentClass(link.color);
               return (
                 <Reveal key={link.href} delay={i * 70}>
                   <Link
                     href={link.href}
-                    className="group card-lift bg-white rounded-xl border border-zinc-150/80 p-4 sm:p-5 text-center hover:border-thu-purple/40 hover:shadow-lg active-press flex flex-col items-center justify-center"
+                    className={`group card-lift card-top-accent ${accentClass} bg-white rounded-xl border border-zinc-150/80 p-4 sm:p-5 text-center hover:border-thu-purple/40 hover:shadow-lg active-press flex flex-col items-center justify-center`}
                   >
                     {/* 双色微渐变图标：hover 弹跳 */}
                     <div

@@ -17,6 +17,7 @@ export default async function OrganizationPage() {
   return (
     <ListPageShell
       title="机构设置"
+      accent="gold"
       crumbs={[{ label: "学校概况", href: "/about" }, { label: "机构设置" }]}
       fallback="正在加载机构信息…"
     >

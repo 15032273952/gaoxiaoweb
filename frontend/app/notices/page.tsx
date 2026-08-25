@@ -17,6 +17,7 @@ export default async function NoticesPage() {
   return (
     <ListPageShell
       title="通知公告"
+      accent="red"
       crumbs={[{ label: "新闻公告", href: "/news" }, { label: "通知公告" }]}
       fallback="正在加载通知列表…"
     >

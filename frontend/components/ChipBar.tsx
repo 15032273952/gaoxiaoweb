@@ -8,8 +8,8 @@ import Link from "next/link";
 /** 筛选胶囊选中/未选中样式 */
 export function chipClass(active: boolean): string {
   return active
-    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-thu-purple text-white shadow-2xs"
-    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple hover:text-thu-purple transition-colors";
+    ? "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full text-white shadow-sm bg-gradient-to-r from-thu-purple to-thu-purple-dark"
+    : "flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-thu-purple/50 hover:text-thu-purple hover:bg-thu-purple-50 transition-colors";
 }
 
 /** 胶囊条容器：移动端横向无阻滑动，桌面换行 */

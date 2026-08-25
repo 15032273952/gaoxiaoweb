@@ -14,7 +14,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { ArticleToolbar } from "@/components/ArticleToolbar";
 import { PrevNextNav } from "@/components/PrevNextNav";
 import { AttachmentList } from "@/components/AttachmentList";
-import { articleCategoryLabel, formatDate } from "@/lib/labels";
+import { articleCategoryLabel, articleCategoryBadgeClass, formatDate } from "@/lib/labels";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -60,22 +60,23 @@ export default async function ArticleDetailPage({ params }: Props) {
         ]}
       />
       <ArticleToolbar />
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold mb-3 font-serif-title">{article.title}</h1>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-400">
+      <div className="card-top-accent bg-white border border-zinc-150/80 rounded-xl shadow-2xs p-5 sm:p-8">
+      <header className="mb-6 pb-5 border-b border-zinc-100">
+        <h1 className="text-2xl font-bold mb-3 font-serif-title text-zinc-900">{article.title}</h1>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-400">
           <Link
             href={`/news?category=${encodeURIComponent(article.category)}`}
-            className="hover:text-thu-purple"
+            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border hover:opacity-80 transition-opacity ${articleCategoryBadgeClass(article.category)}`}
           >
             {articleCategoryLabel(article.category)}
           </Link>
-          <span>{formatDate(article.publishedAt)}</span>
+          <span className="font-mono">{formatDate(article.publishedAt)}</span>
           {article.authors && <span>作者：{article.authors}</span>}
         </div>
       </header>
 
       {article.coverUrl && (
-        <div className="mb-8 overflow-hidden rounded-lg">
+        <div className="mb-6 overflow-hidden rounded-lg ring-1 ring-zinc-100">
           <img
             src={article.coverUrl}
             alt={article.title}
@@ -90,6 +91,7 @@ export default async function ArticleDetailPage({ params }: Props) {
       />
 
       <AttachmentList items={article.attachments} />
+      </div>
 
       <PrevNextNav
         items={all.map((a) => ({ slug: a.slug, title: a.title }))}
@@ -98,14 +100,16 @@ export default async function ArticleDetailPage({ params }: Props) {
       />
 
       {related.length > 0 && (
-        <section className="mt-10 border-t border-zinc-200 pt-6">
-          <h2 className="text-lg font-semibold mb-3 font-serif-title">相关阅读</h2>
+        <section className="mt-8 bg-white border border-zinc-150/80 rounded-xl p-5 sm:p-6 shadow-2xs">
+          <h2 className="section-title section-blue mb-4">
+            <span className="section-title-text">相关阅读</span>
+          </h2>
           <ul className="space-y-2">
             {related.map((a) => (
               <li key={a.id}>
                 <Link
                   href={`/news/${a.slug}`}
-                  className="text-sm text-zinc-700 hover:text-thu-purple"
+                  className="text-sm text-zinc-700 hover:text-thu-blue transition-colors"
                 >
                   {a.title}
                   <span className="ml-2 text-xs text-zinc-400">{formatDate(a.publishedAt)}</span>

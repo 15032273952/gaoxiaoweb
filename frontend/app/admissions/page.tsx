@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdmissionsPage() {
-  return <CmsPage slug="admissions" title="招生就业" crumbs={[{ label: "招生就业" }]} />;
+  return <CmsPage slug="admissions" title="招生就业" accent="green" crumbs={[{ label: "招生就业" }]} />;
 }

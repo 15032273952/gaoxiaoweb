@@ -47,22 +47,35 @@ export function SiteFooter({ setting }: { setting?: SiteSetting | null }) {
 
           {/* 栏目导航列 */}
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 border-b border-white/15 py-6">
-            {footerColumns.slice(0, 3).map((col) => (
-              <div key={col.href}>
-                <Link href={col.href} className="font-semibold text-white hover:underline">
-                  {col.label}
-                </Link>
-                <ul className="mt-3 space-y-1.5 text-white/70">
-                  {(col.children ?? [{ label: col.label, href: col.href }]).map((child) => (
-                    <li key={child.href}>
-                      <Link href={child.href} className="hover:text-white">
-                        {child.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {footerColumns.slice(0, 3).map((col, i) => {
+              // 三列分别用金/蓝/绿小竖条点缀，呼应首页文脉配色
+              const accent =
+                i === 0 ? "var(--thu-gold)" : i === 1 ? "var(--thu-blue-light)" : "var(--thu-green-light)";
+              return (
+                <div key={col.href}>
+                  <Link
+                    href={col.href}
+                    className="inline-flex items-center gap-2 font-semibold text-white hover:text-thu-gold transition-colors"
+                  >
+                    <span
+                      aria-hidden
+                      className="inline-block w-1 h-4 rounded-sm"
+                      style={{ background: accent }}
+                    />
+                    {col.label}
+                  </Link>
+                  <ul className="mt-3 space-y-1.5 text-white/70">
+                    {(col.children ?? [{ label: col.label, href: col.href }]).map((child) => (
+                      <li key={child.href}>
+                        <Link href={child.href} className="hover:text-white transition-colors">
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
 
           {/* 联系方式 */}

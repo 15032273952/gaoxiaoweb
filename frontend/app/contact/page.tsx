@@ -16,42 +16,44 @@ export default async function ContactPage() {
   const setting = await getSiteSetting().catch(() => null);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
-      <Breadcrumb items={[{ label: "联系我们" }]} />
-      <div className="bg-white border border-zinc-150/80 rounded-xl p-5 sm:p-8 shadow-2xs">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900 border-b border-zinc-100 pb-4">
-          联系我们
-        </h1>
-
+    <div className="w-full">
+      <div className="w-full bg-gradient-to-b from-thu-purple-50/80 to-transparent border-b border-thu-purple/5">
+        <div className="mx-auto max-w-4xl px-4 pt-6 pb-5 sm:pt-8 sm:pb-6">
+          <Breadcrumb items={[{ label: "联系我们" }]} />
+          <h1 className="page-heading text-2xl sm:text-3xl font-bold font-serif-title">联系我们</h1>
+        </div>
+      </div>
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
+      <div className="card-top-accent bg-white border border-zinc-150/80 rounded-xl p-5 sm:p-8 shadow-2xs">
         {setting ? (
           <div className="grid sm:grid-cols-2 gap-4 text-zinc-700">
             {setting.address && (
-              <div className="bg-thu-surface-warm p-4 rounded-xl border border-zinc-100">
-                <h2 className="text-xs text-zinc-400 font-medium mb-1 uppercase tracking-wider">校区地址</h2>
+              <div className="bg-thu-purple-50 p-4 rounded-xl border border-thu-purple/10">
+                <h2 className="text-xs text-thu-purple font-medium mb-1 uppercase tracking-wider">校区地址</h2>
                 <p className="text-sm sm:text-base font-medium text-zinc-900">{setting.address}</p>
               </div>
             )}
             {setting.postcode && (
-              <div className="bg-thu-surface-warm p-4 rounded-xl border border-zinc-100">
-                <h2 className="text-xs text-zinc-400 font-medium mb-1 uppercase tracking-wider">邮政编码</h2>
+              <div className="bg-thu-gold-50 p-4 rounded-xl border border-thu-gold/15">
+                <h2 className="text-xs text-thu-gold-dark font-medium mb-1 uppercase tracking-wider">邮政编码</h2>
                 <p className="text-sm sm:text-base font-medium text-zinc-900 font-mono">{setting.postcode}</p>
               </div>
             )}
             {setting.generalPhone && (
-              <div className="bg-thu-surface-warm p-4 rounded-xl border border-zinc-100">
-                <h2 className="text-xs text-zinc-400 font-medium mb-1 uppercase tracking-wider">联系电话</h2>
+              <div className="bg-thu-green-50 p-4 rounded-xl border border-thu-green/10">
+                <h2 className="text-xs text-thu-green-dark font-medium mb-1 uppercase tracking-wider">联系电话</h2>
                 <p className="text-sm sm:text-base font-medium">
-                  <a href={`tel:${setting.generalPhone}`} className="text-thu-purple hover:underline font-mono">
+                  <a href={`tel:${setting.generalPhone}`} className="text-thu-green-dark hover:underline font-mono">
                     {setting.generalPhone}
                   </a>
                 </p>
               </div>
             )}
             {setting.generalEmail && (
-              <div className="bg-thu-surface-warm p-4 rounded-xl border border-zinc-100">
-                <h2 className="text-xs text-zinc-400 font-medium mb-1 uppercase tracking-wider">官方邮箱</h2>
+              <div className="bg-thu-blue-50 p-4 rounded-xl border border-thu-blue/10">
+                <h2 className="text-xs text-thu-blue-dark font-medium mb-1 uppercase tracking-wider">官方邮箱</h2>
                 <p className="text-sm sm:text-base font-medium">
-                  <a href={`mailto:${setting.generalEmail}`} className="text-thu-purple hover:underline font-mono">
+                  <a href={`mailto:${setting.generalEmail}`} className="text-thu-blue-dark hover:underline font-mono">
                     {setting.generalEmail}
                   </a>
                 </p>
@@ -107,6 +109,7 @@ export default async function ContactPage() {
           <p className="text-xs sm:text-sm text-zinc-500 mb-4">可通过关键词检索全校新闻、通知公告、师资学者与部门设置。</p>
           <SearchForm id="contact-search" />
         </section>
+      </div>
       </div>
     </div>
   );

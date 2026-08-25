@@ -22,12 +22,12 @@ export function Pagination({
       {page > 1 ? (
         <Link
           href={hrefFor(page - 1)}
-          className="px-3 py-1.5 text-sm border border-zinc-200 rounded hover:border-thu-purple hover:text-thu-purple"
+          className="px-3 py-1.5 text-sm border border-zinc-200 rounded bg-white hover:border-thu-purple/50 hover:text-thu-purple hover:bg-thu-purple-50 transition-colors"
         >
           上一页
         </Link>
       ) : (
-        <span className="px-3 py-1.5 text-sm text-zinc-300">上一页</span>
+        <span className="px-3 py-1.5 text-sm text-zinc-300 bg-white/60 border border-zinc-100 rounded">上一页</span>
       )}
 
       {pages.map((p, i) =>
@@ -42,8 +42,8 @@ export function Pagination({
             aria-current={p === page ? "page" : undefined}
             className={
               p === page
-                ? "px-3 py-1.5 text-sm rounded bg-thu-purple text-white"
-                : "px-3 py-1.5 text-sm border border-zinc-200 rounded hover:border-thu-purple hover:text-thu-purple"
+                ? "px-3 py-1.5 text-sm rounded text-white shadow-sm bg-gradient-to-r from-thu-purple to-thu-purple-dark"
+                : "px-3 py-1.5 text-sm border border-zinc-200 rounded bg-white hover:border-thu-purple/50 hover:text-thu-purple hover:bg-thu-purple-50 transition-colors"
             }
           >
             {p}
@@ -54,12 +54,12 @@ export function Pagination({
       {page < totalPages ? (
         <Link
           href={hrefFor(page + 1)}
-          className="px-3 py-1.5 text-sm border border-zinc-200 rounded hover:border-thu-purple hover:text-thu-purple"
+          className="px-3 py-1.5 text-sm border border-zinc-200 rounded bg-white hover:border-thu-purple/50 hover:text-thu-purple hover:bg-thu-purple-50 transition-colors"
         >
           下一页
         </Link>
       ) : (
-        <span className="px-3 py-1.5 text-sm text-zinc-300">下一页</span>
+        <span className="px-3 py-1.5 text-sm text-zinc-300 bg-white/60 border border-zinc-100 rounded">下一页</span>
       )}
     </nav>
   );

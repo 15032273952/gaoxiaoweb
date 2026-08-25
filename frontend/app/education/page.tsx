@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function EducationPage() {
-  return <CmsPage slug="education" title="教育教学" crumbs={[{ label: "教育教学" }]} />;
+  return <CmsPage slug="education" title="教育教学" accent="green" crumbs={[{ label: "教育教学" }]} />;
 }

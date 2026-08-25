@@ -17,6 +17,7 @@ export default async function FacultyPage() {
   return (
     <ListPageShell
       title="师资队伍"
+      accent="green"
       crumbs={[{ label: "人才培养", href: "/education" }, { label: "师资队伍" }]}
       fallback="正在加载师资列表…"
     >

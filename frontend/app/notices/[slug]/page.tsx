@@ -7,7 +7,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { ArticleToolbar } from "@/components/ArticleToolbar";
 import { PrevNextNav } from "@/components/PrevNextNav";
 import { AttachmentList } from "@/components/AttachmentList";
-import { formatDate, noticeLevelLabel } from "@/lib/labels";
+import { formatDate, noticeLevelLabel, noticeLevelBadgeClass } from "@/lib/labels";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -48,6 +48,8 @@ export default async function NoticeDetailPage({ params }: Props) {
       ? new Date(notice.effectiveDate).getTime() > now
       : false;
 
+  const cardAccent = notice.level === "school" ? "accent-red" : "";
+
   return (
     <article className="mx-auto max-w-3xl px-4 py-8">
       <Breadcrumb
@@ -57,29 +59,36 @@ export default async function NoticeDetailPage({ params }: Props) {
         ]}
       />
       <ArticleToolbar />
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold mb-3 font-serif-title">{notice.title}</h1>
-        <div className="text-sm text-zinc-400 flex flex-wrap gap-x-4 gap-y-1">
-          <span>{formatDate(notice.publishedAt)}</span>
-          {notice.noticeNo && <span>文号：{notice.noticeNo}</span>}
-          {notice.level && <span>级别：{noticeLevelLabel(notice.level)}</span>}
+      <div className={`card-top-accent ${cardAccent} bg-white border border-zinc-150/80 rounded-xl shadow-2xs p-5 sm:p-8`}>
+      <header className="mb-6 pb-5 border-b border-zinc-100">
+        <h1 className="text-2xl font-bold mb-3 font-serif-title text-zinc-900">{notice.title}</h1>
+        <div className="text-sm text-zinc-400 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className="font-mono">{formatDate(notice.publishedAt)}</span>
+          {notice.noticeNo && <span className="font-mono">文号：{notice.noticeNo}</span>}
+          {notice.level && (
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${noticeLevelBadgeClass(notice.level)}`}>
+              {noticeLevelLabel(notice.level)}
+            </span>
+          )}
           {notice.effectiveDate && <span>生效：{formatDate(notice.effectiveDate)}</span>}
           {notice.expireDate && <span>失效：{formatDate(notice.expireDate)}</span>}
         </div>
         {expired && (
-          <p className="mt-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+          <p className="mt-3 text-sm text-thu-red-dark bg-thu-red-light border border-thu-red/20 rounded-lg px-3 py-2">
             本通知已过失效日期，内容仅供查阅。
           </p>
         )}
         {!expired && notYetEffective && (
-          <p className="mt-3 text-sm text-zinc-600 bg-zinc-50 border border-zinc-200 rounded px-3 py-2">
+          <p className="mt-3 text-sm text-thu-blue-dark bg-thu-blue-light border border-thu-blue/20 rounded-lg px-3 py-2">
             本通知尚未到生效日期。
           </p>
         )}
       </header>
 
       {notice.summary && (
-        <p className="mb-6 text-zinc-600 text-sm leading-relaxed">{notice.summary}</p>
+        <p className="mb-6 text-zinc-600 text-sm leading-relaxed bg-thu-surface-warm border-l-4 border-thu-gold/60 rounded-r-lg px-4 py-3">
+          {notice.summary}
+        </p>
       )}
 
       <div
@@ -88,6 +97,7 @@ export default async function NoticeDetailPage({ params }: Props) {
       />
 
       <AttachmentList items={notice.attachments} />
+      </div>
 
       <PrevNextNav
         items={allNotices.map((n) => ({ slug: n.slug, title: n.title }))}
@@ -95,8 +105,11 @@ export default async function NoticeDetailPage({ params }: Props) {
         basePath="/notices"
       />
 
-      <p className="mt-10">
-        <Link href="/notices" className="text-sm text-thu-purple hover:underline">
+      <p className="mt-8">
+        <Link
+          href="/notices"
+          className="inline-flex items-center gap-1 text-sm text-thu-purple hover:text-thu-purple-dark transition-colors"
+        >
           ← 返回通知列表
         </Link>
       </p>

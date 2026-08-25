@@ -18,17 +18,30 @@ export function ListPageShell({
   crumbs,
   fallback,
   children,
+  accent = "purple",
 }: {
   title: string;
   crumbs: BreadcrumbItem[];
   fallback: string;
   children: React.ReactNode;
+  /** 页头标题配色：purple/blue/green/gold/red */
+  accent?: "purple" | "blue" | "green" | "gold" | "red";
 }) {
+  const headingAccent = accent === "purple" ? "" : `page-${accent}`;
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <Breadcrumb items={crumbs} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 font-serif-title text-zinc-900">{title}</h1>
-      <Suspense fallback={<p className="text-sm text-zinc-400">{fallback}</p>}>{children}</Suspense>
+    <div className="w-full">
+      {/* 淡彩页头带 */}
+      <div className="w-full bg-gradient-to-b from-thu-purple-50/80 to-transparent border-b border-thu-purple/5">
+        <div className="mx-auto max-w-6xl px-4 pt-6 pb-5 sm:pt-8 sm:pb-6">
+          <Breadcrumb items={crumbs} />
+          <h1 className={`page-heading ${headingAccent} text-2xl sm:text-3xl font-bold font-serif-title`}>
+            {title}
+          </h1>
+        </div>
+      </div>
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
+        <Suspense fallback={<p className="text-sm text-zinc-400">{fallback}</p>}>{children}</Suspense>
+      </div>
     </div>
   );
 }

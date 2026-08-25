@@ -11,6 +11,7 @@ export default function OpennessPage() {
     <CmsPage
       slug="openness"
       title="信息公开"
+      accent="blue"
       crumbs={[{ label: "学校概况", href: "/about" }, { label: "信息公开" }]}
       attachmentTitle="公开文件"
     />
