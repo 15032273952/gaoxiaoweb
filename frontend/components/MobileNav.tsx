@@ -1,78 +1,21 @@
 "use client";
 
 /**
- * 主导航：当前栏目高亮；下拉支持悬停与键盘 focus-within；
- * 移动端为滑出式抽屉导航（遮罩 + 手风琴二级菜单）
+ * MobileNav - 移动端抽屉式导航（< md 断点显示）
+ *
+ * 学习要点：
+ * 1. 为什么是客户端组件？—— 需要 useState 管理抽屉开合、useEffect 处理副作用。
+ * 2. 抽屉开合：drawerOpen 状态 + 条件 class（translate-x-0 / translate-x-full）实现滑入滑出。
+ * 3. 手风琴二级菜单：expandedMenus 记录每个菜单是否展开，点击切换。
+ * 4. 两个 useEffect 的职责：
+ *    - 抽屉打开时锁定 body 滚动（防止背景跟着滚）。
+ *    - 按 ESC 键关闭抽屉（键盘无障碍）。
  */
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isNavActive, navItems, utilityLinks } from "@/lib/nav";
-
-export function DesktopNav() {
-  const pathname = usePathname() ?? "/";
-
-  return (
-    <nav className="hidden md:block sticky top-0 z-40 w-full bg-gradient-to-r from-thu-purple via-[#6f0a7e] to-thu-purple shadow-md border-b-2 border-thu-gold/80">
-      <div className="mx-auto max-w-6xl px-4">
-        <ul className="flex items-stretch">
-          {navItems.map((item) => {
-            const active = isNavActive(pathname, item);
-            return (
-              <li key={item.href} className="relative group">
-                <Link
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`flex items-center px-5 py-3.5 text-[15px] font-medium transition-colors ${
-                    active
-                      ? "bg-thu-purple-dark text-white"
-                      : "text-white/95 hover:bg-thu-purple-dark hover:text-white"
-                  }`}
-                >
-                  {item.label}
-                  {item.children && (
-                    <svg
-                      className="ml-1 w-3 h-3 opacity-70 group-hover:rotate-180 group-focus-within:rotate-180 transition-transform"
-                      viewBox="0 0 12 12"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                    </svg>
-                  )}
-                </Link>
-                {item.children && (
-                  <ul className="absolute left-0 top-full min-w-44 bg-white/95 backdrop-blur-md shadow-xl border-t-2 border-thu-purple rounded-b-md py-1.5 z-50 invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all duration-200 ring-1 ring-black/5">
-                    {item.children.map((child) => {
-                      const childActive =
-                        pathname === child.href || pathname.startsWith(`${child.href}/`);
-                      return (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            aria-current={childActive ? "page" : undefined}
-                            className={`block px-5 py-2.5 text-sm transition-colors ${
-                              childActive
-                                ? "bg-thu-purple-light text-thu-purple-dark"
-                                : "text-zinc-700 hover:bg-thu-purple-light hover:text-thu-purple-dark"
-                            }`}
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </nav>
-  );
-}
 
 export function MobileNav() {
   const pathname = usePathname() ?? "/";

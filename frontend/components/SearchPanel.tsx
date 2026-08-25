@@ -9,7 +9,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { searchSite, type SiteSearchHit } from "@/lib/content";
+import { searchSite, type SiteSearchHit } from "@/lib/search";
 import { SearchForm } from "@/components/SearchForm";
 
 const KIND_LABEL = {

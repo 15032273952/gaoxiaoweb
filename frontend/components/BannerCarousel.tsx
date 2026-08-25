@@ -1,60 +1,26 @@
 /**
- * BannerCarousel - 主视觉轮播图（客户端组件，支持触控手势滑动）
+ * BannerCarousel - 主视觉轮播图（客户端组件）
  *
- * 优化点：
- * 1. 移动端触摸滑动（Touch Swipe）支持
- * 2. 响应式视口高度适配（手机 240px，平板 340px，桌面 460px）
- * 3. 增强视觉质感：渐变遮罩、金色彩条装饰、流畅指示点
+ * 学习要点：
+ * 1. 为什么是客户端组件？—— 轮播需要交互状态（当前下标、自动播放、触摸滑动），
+ *    这些只能在浏览器端运行，所以顶部有 "use client"。
+ * 2. 本组件只负责"渲染"，轮播的"状态与逻辑"全部在 lib/useCarousel.ts 的
+ *    useCarousel Hook 里，职责分离，便于理解与复用。
+ * 3. 响应式高度：手机 240px → 平板 340px → 桌面 460px（h-60 / sm:h-80 / md:h-[28rem]）。
+ * 4. 无障碍：aria-roledescription="carousel"、aria-label、指示点带 aria-current。
  */
 
 "use client";
 
 import type { BannerItem } from "@/lib/types";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-const INTERVAL_MS = 6000;
+import { useCarousel } from "@/lib/useCarousel";
 
 export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const touchStartX = useRef<number | null>(null);
+  const { index, go, setPaused, handleTouchStart, handleTouchEnd } =
+    useCarousel(banners.length);
 
-  const go = useCallback(
-    (next: number) => {
-      if (banners.length === 0) return;
-      setIndex(((next % banners.length) + banners.length) % banners.length);
-    },
-    [banners.length],
-  );
-
-  useEffect(() => {
-    if (banners.length <= 1 || paused) return;
-    const timer = window.setInterval(() => go(index + 1), INTERVAL_MS);
-    return () => window.clearInterval(timer);
-  }, [banners.length, go, index, paused]);
-
-  // 移动端触摸滑动处理
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setPaused(true);
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    setPaused(false);
-    if (touchStartX.current === null) return;
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
-
-    // 滑动距离大于 45px 触发切换
-    if (diff > 45) {
-      go(index + 1);
-    } else if (diff < -45) {
-      go(index - 1);
-    }
-    touchStartX.current = null;
-  };
-
+  // 无轮播内容时的占位
   if (banners.length === 0) {
     return (
       <div className="relative w-full h-56 sm:h-72 md:h-[28rem] flex items-center justify-center text-white/70 font-serif-title text-lg md:text-xl overflow-hidden">
@@ -90,10 +56,7 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div
-                aria-hidden
-                className="absolute inset-0 thu-flow-gradient"
-              />
+              <div aria-hidden className="absolute inset-0 thu-flow-gradient" />
             )}
 
             {banner.title && (
@@ -109,6 +72,7 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
           </div>
         );
 
+        // 有链接时整张图可点击，否则纯展示
         if (banner.linkUrl) {
           const wrapClass = isCurrent ? "block" : "block pointer-events-none";
           return banner.openInNewTab ? (
@@ -159,7 +123,7 @@ export function BannerCarousel({ banners }: { banners: BannerItem[] }) {
             </svg>
           </button>
 
-          {/* 底部指示指示条（移动端友好触控） */}
+          {/* 底部指示条（移动端友好触控） */}
           <div className="absolute bottom-2.5 sm:bottom-3.5 left-0 right-0 z-20 flex justify-center gap-1.5 sm:gap-2">
             {banners.map((b, i) => (
               <button

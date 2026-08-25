@@ -1,23 +1,33 @@
 /**
- * CMS 单页统一模板：面包屑 + 标题 + 正文 + 附件
- * 卡片式容器，标题带底部分隔线，附件链接配图标
+ * CmsPage - 静态内容页（"关于我们"、"教育教学"、"招生就业"等单页）
+ *
+ * 学习要点：
+ * 1. 为什么是服务端组件（没有 "use client"）？—— 需要 await getPageBySlug() 读取数据。
+ * 2. 本组件把"取数"（getPageBySlug）和"渲染"（面包屑 + 标题 + 正文 + 附件）
+ *    放在同一个文件里。因为只有本组件使用这套逻辑，无需再拆成 Shell/View 两层，
+ *    减少文件跳转，更易读。
+ * 3. 各单页（about/admissions/education 等）只需声明 metadata 并调用本组件，
+ *    无需重复取数逻辑。
+ * 4. 正文 bodyHtml 是可信 HTML，经 dangerouslySetInnerHTML 渲染（勿粘贴外部来源）。
  */
 
+import { getPageBySlug } from "@/lib/content";
 import { AttachmentList } from "@/components/AttachmentList";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/Breadcrumb";
-import type { PageContent } from "@/lib/types";
 
-export function CmsPageView({
+export async function CmsPage({
+  slug,
   title,
   crumbs,
-  page,
   attachmentTitle,
 }: {
+  slug: string;
   title: string;
   crumbs: BreadcrumbItem[];
-  page: PageContent | null;
   attachmentTitle?: string;
 }) {
+  const page = await getPageBySlug(slug).catch(() => null);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
       <Breadcrumb items={crumbs} />

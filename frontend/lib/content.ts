@@ -21,7 +21,6 @@ import type {
   FacultyProfile,
   PageContent,
 } from "./types";
-import { articleCategoryLabel, noticeLevelLabel } from "./labels";
 import articlesData from "@/content/articles.json";
 import noticesData from "@/content/notices.json";
 import bannersData from "@/content/banners.json";
@@ -90,94 +89,4 @@ export async function getFacultyProfiles(): Promise<FacultyProfile[]> {
 
 export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   return pages.find((p) => p.slug === slug) ?? null;
-}
-
-export type SiteSearchHit = {
-  kind: "news" | "notice" | "faculty" | "department";
-  title: string;
-  href: string;
-  snippet: string;
-};
-
-function includesQuery(haystack: string | undefined, query: string): boolean {
-  return (haystack ?? "").toLowerCase().includes(query);
-}
-
-/** 站内检索：新闻、通知、师资、部门（构建期生成索引，客户端过滤） */
-export async function searchSite(q: string): Promise<SiteSearchHit[]> {
-  const query = q.trim().toLowerCase();
-  if (!query) return [];
-
-  const [articleList, noticeList, facultyList, departmentList] = await Promise.all([
-    getArticles(),
-    getNotices(),
-    getFacultyProfiles(),
-    getDepartments(),
-  ]);
-
-  const hits: SiteSearchHit[] = [];
-
-  for (const a of articleList) {
-    if (
-      includesQuery(a.title, query) ||
-      includesQuery(a.summary, query) ||
-      includesQuery(a.category, query) ||
-      includesQuery(articleCategoryLabel(a.category), query)
-    ) {
-      hits.push({
-        kind: "news",
-        title: a.title,
-        href: `/news/${a.slug}`,
-        snippet: a.summary || articleCategoryLabel(a.category),
-      });
-    }
-  }
-
-  for (const n of noticeList) {
-    if (
-      includesQuery(n.title, query) ||
-      includesQuery(n.noticeNo, query) ||
-      includesQuery(noticeLevelLabel(n.level), query)
-    ) {
-      hits.push({
-        kind: "notice",
-        title: n.title,
-        href: `/notices/${n.slug}`,
-        snippet: [n.noticeNo, noticeLevelLabel(n.level)].filter(Boolean).join(" · ") || "通知公告",
-      });
-    }
-  }
-
-  for (const f of facultyList) {
-    if (
-      includesQuery(f.name, query) ||
-      includesQuery(f.title, query) ||
-      includesQuery(f.college, query) ||
-      includesQuery(f.researchFields, query)
-    ) {
-      hits.push({
-        kind: "faculty",
-        title: f.name,
-        href: `/faculty#faculty-${f.id}`,
-        snippet: [f.title, f.college, f.researchFields].filter(Boolean).join(" · "),
-      });
-    }
-  }
-
-  for (const d of departmentList) {
-    if (
-      includesQuery(d.name, query) ||
-      includesQuery(d.intro, query) ||
-      includesQuery(d.responsibilities, query)
-    ) {
-      hits.push({
-        kind: "department",
-        title: d.name,
-        href: `/organization#dept-${d.id}`,
-        snippet: d.intro ?? d.responsibilities ?? "机构设置",
-      });
-    }
-  }
-
-  return hits;
 }

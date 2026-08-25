@@ -1,5 +1,12 @@
 /**
  * 新闻详情页：分类、作者、面包屑、相关阅读
+ *
+ * 学习要点：
+ * 1. 动态路由 [slug]：URL 形如 /news/xxx，xxx 就是 slug 参数。
+ * 2. generateStaticParams：静态导出下，必须在这里列出所有可能的 slug，
+ *    构建期才会为每篇文章预生成一个 HTML 页面（否则动态路由无法静态导出）。
+ * 3. params 是 Promise：Next.js 16 中动态路由参数是异步的，必须 await。
+ * 4. notFound()：slug 不存在时返回 404 页面。
  */
 
 import { getArticleBySlug, getArticles } from "@/lib/content";

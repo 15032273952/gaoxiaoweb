@@ -1,4 +1,4 @@
-import { CmsPageShell } from "@/components/CmsPageShell";
+import { CmsPage } from "@/components/CmsPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function OpennessPage() {
   return (
-    <CmsPageShell
+    <CmsPage
       slug="openness"
       title="信息公开"
       crumbs={[{ label: "学校概况", href: "/about" }, { label: "信息公开" }]}

@@ -1,5 +1,12 @@
 /**
  * 校园新闻 RSS 2.0：/feed.xml
+ *
+ * 学习要点：
+ * 1. 这是一个 Route Handler（路由处理器），用 GET() 函数响应 /feed.xml 请求。
+ * 2. export const dynamic = "force-static"：强制在构建期生成静态 feed.xml。
+ *    因为本项目是 output: "export" 全静态导出，没有服务端运行时，
+ *    不加这行会导致静态导出失败。
+ * 3. escapeXml：RSS 是 XML 格式，标题里的 & < > " 必须转义，否则 XML 解析报错。
  */
 
 import { getArticles, getSiteSetting } from "@/lib/content";

@@ -11,7 +11,8 @@
 
 import Link from "next/link";
 import { SearchForm } from "@/components/SearchForm";
-import { DesktopNav, MobileNav } from "@/components/SiteNav";
+import { DesktopNav } from "@/components/DesktopNav";
+import { MobileNav } from "@/components/MobileNav";
 import { utilityLinks } from "@/lib/nav";
 
 export function SiteHeader({

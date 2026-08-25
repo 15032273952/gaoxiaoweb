@@ -1,4 +1,4 @@
-import { CmsPageShell } from "@/components/CmsPageShell";
+import { CmsPage } from "@/components/CmsPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  return <CmsPageShell slug="about" title="学校概况" crumbs={[{ label: "学校概况" }]} />;
+  return <CmsPage slug="about" title="学校概况" crumbs={[{ label: "学校概况" }]} />;
 }
